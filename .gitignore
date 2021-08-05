@@ -9,3 +9,6 @@ bin
 *.exe
 *.out
 *.app
+
+# Test Results
+TestResults

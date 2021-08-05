@@ -6,4 +6,15 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="specs\**" />
+    <EmbeddedResource Remove="specs\**" />
+    <None Remove="specs\**" />
+    <Page Remove="specs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
+
 </Project>
