@@ -1,5 +1,7 @@
 ﻿using System;
+
 using System.Collections.Generic;
+using System.Linq;
 
 namespace loppis.ViewModels
 {
@@ -15,6 +17,10 @@ namespace loppis.ViewModels
         public int Sum { get; set; }
         public List<Tuple<int, int>> ItemList { get; set; }
 
-        public void EnterSale() { }
+        public void EnterSale()
+        {
+            ItemList.Add(new Tuple<int, int>(SellerId, Price));
+            Sum = ItemList.Sum(i => i.Item2);
+        }
     }
 }

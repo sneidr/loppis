@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "loppis", "loppis.csproj", "{D5377B9F-65CD-463C-B702-E2114850E1B4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoppisSpecs", "specs\SpecFlow\LoppisSpecs.csproj", "{3D07011C-EF2F-406D-B335-EA95C65A5336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoppisSpecs", "specs\SpecFlow\LoppisSpecs.csproj", "{3D07011C-EF2F-406D-B335-EA95C65A5336}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoppisTest", "..\LoppisTest\LoppisTest.csproj", "{A794E10E-98DD-4032-B67C-EA1A3A8FD1BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{3D07011C-EF2F-406D-B335-EA95C65A5336}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D07011C-EF2F-406D-B335-EA95C65A5336}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D07011C-EF2F-406D-B335-EA95C65A5336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A794E10E-98DD-4032-B67C-EA1A3A8FD1BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A794E10E-98DD-4032-B67C-EA1A3A8FD1BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A794E10E-98DD-4032-B67C-EA1A3A8FD1BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A794E10E-98DD-4032-B67C-EA1A3A8FD1BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
