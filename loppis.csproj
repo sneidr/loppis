@@ -7,10 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="LoppisTest\**" />
+    <Compile Remove="LoppisTest_old\**" />
     <Compile Remove="specs\**" />
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="LoppisTest\**" />
+    <EmbeddedResource Remove="LoppisTest_old\**" />
     <EmbeddedResource Remove="specs\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="LoppisTest\**" />
+    <None Remove="LoppisTest_old\**" />
     <None Remove="specs\**" />
+    <None Remove="TestResults\**" />
+    <Page Remove="LoppisTest\**" />
+    <Page Remove="LoppisTest_old\**" />
     <Page Remove="specs\**" />
+    <Page Remove="TestResults\**" />
   </ItemGroup>
 
   <ItemGroup>

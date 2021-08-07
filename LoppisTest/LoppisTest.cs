@@ -54,7 +54,7 @@ namespace LoppisTest
         }
 
         [TestMethod]
-        public void TestEnterMultipleSales_ListHasMultipleEntries()
+        public void TestEnterMultipleSales_ListHasMultipleEntries2()
         {
             SalesViewModel vm = new SalesViewModel();
             vm.Price = 62;
