@@ -54,17 +54,15 @@ namespace LoppisTest
         }
 
         [TestMethod]
-        public void TestEnterMultipleSales_ListHasMultipleEntries2()
+        public void TestEnterOneSale_VMIsClearedAfterEntry()
         {
             SalesViewModel vm = new SalesViewModel();
             vm.Price = 62;
             vm.SellerId = 12;
             vm.EnterSale();
-            vm.Price = 55;
-            vm.SellerId = 15;
-            vm.EnterSale();
 
-            Assert.AreEqual(vm.Sum, 62 + 55);
+            Assert.AreEqual(vm.Price, 0);
+            Assert.AreEqual(vm.SellerId, 0);
         }
     }
 }

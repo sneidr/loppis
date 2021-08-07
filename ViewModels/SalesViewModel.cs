@@ -21,6 +21,8 @@ namespace loppis.ViewModels
         {
             ItemList.Add(new Tuple<int, int>(SellerId, Price));
             Sum = ItemList.Sum(i => i.Item2);
+            SellerId = 0;
+            Price = 0;
         }
     }
 }
