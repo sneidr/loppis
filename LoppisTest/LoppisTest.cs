@@ -10,19 +10,19 @@ namespace LoppisTest
         public void TestEnterOneSale_SumIsEqualToPrice()
         {
             SalesViewModel vm = new SalesViewModel();
-            vm.Price = 62;
-            vm.SellerId = 12;
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
 
-            Assert.AreEqual(vm.Sum, 62);
+            Assert.AreEqual(vm.labelTotal, 62);
         }
 
         [TestMethod]
         public void TestEnterOneSale_ListHasOneEntry()
         {
             SalesViewModel vm = new SalesViewModel();
-            vm.Price = 62;
-            vm.SellerId = 12;
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
 
             Assert.AreEqual(vm.ItemList.Count, 1);
@@ -32,37 +32,38 @@ namespace LoppisTest
         public void TestEnterOneSale_ListEntryCorrect()
         {
             SalesViewModel vm = new SalesViewModel();
-            vm.Price = 62;
-            vm.SellerId = 12;
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
 
-            Assert.AreEqual(vm.ItemList[0], new System.Tuple<int, int>(12, 62));
+            Assert.AreEqual(vm.ItemList[0].SellerId, 12);
+            Assert.AreEqual(vm.ItemList[0].Price, 62);
         }
 
         [TestMethod]
         public void TestEnterMultipleSales_ListHasMultipleEntries()
         {
             SalesViewModel vm = new SalesViewModel();
-            vm.Price = 62;
-            vm.SellerId = 12;
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
-            vm.Price = 55;
-            vm.SellerId = 15;
+            vm.CurrentEntry.Price = 55;
+            vm.CurrentEntry.SellerId = 15;
             vm.EnterSale();
 
-            Assert.AreEqual(vm.Sum, 62 + 55);
+            Assert.AreEqual(vm.labelTotal, 62 + 55);
         }
 
         [TestMethod]
         public void TestEnterOneSale_VMIsClearedAfterEntry()
         {
             SalesViewModel vm = new SalesViewModel();
-            vm.Price = 62;
-            vm.SellerId = 12;
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
 
-            Assert.AreEqual(vm.Price, 0);
-            Assert.AreEqual(vm.SellerId, 0);
+            Assert.AreEqual(vm.CurrentEntry.Price, 0);
+            Assert.AreEqual(vm.CurrentEntry.SellerId, 0);
         }
     }
 }

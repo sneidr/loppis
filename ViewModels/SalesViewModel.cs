@@ -1,6 +1,5 @@
-﻿using System;
-
-using System.Collections.Generic;
+﻿using loppis.Model;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace loppis.ViewModels
@@ -9,20 +8,19 @@ namespace loppis.ViewModels
     {
         public SalesViewModel()
         {
-            ItemList = new List<Tuple<int, int>>();
+            CurrentEntry = new SaleEntry();
+            ItemList = new ObservableCollection<SaleEntry>();
         }
 
-        public int SellerId { get; set; }
-        public int Price { get; set; }
-        public int Sum { get; set; }
-        public List<Tuple<int, int>> ItemList { get; set; }
+        public SaleEntry CurrentEntry { get; set; }
+        public int labelTotal { get; set; }
+        public ObservableCollection<SaleEntry> ItemList { get; set; }
 
         public void EnterSale()
         {
-            ItemList.Add(new Tuple<int, int>(SellerId, Price));
-            Sum = ItemList.Sum(i => i.Item2);
-            SellerId = 0;
-            Price = 0;
+            ItemList.Add(new SaleEntry(CurrentEntry.SellerId, CurrentEntry.Price));
+            labelTotal = ItemList.Sum(i => i.Price);
+            CurrentEntry.Clear();
         }
     }
 }

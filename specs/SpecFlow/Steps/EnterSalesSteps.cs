@@ -18,13 +18,13 @@ namespace LoppisSpecs.Steps
         [Given(@"the seller id is (.*)")]
         public void GivenTheSellerIdIs(int id)
         {
-            m_vm.SellerId = id;
+            m_vm.CurrentEntry.SellerId = id;
         }
 
         [Given(@"the price is (.*)")]
         public void GivenThePriceIs(int price)
         {
-            m_vm.Price = price;
+            m_vm.CurrentEntry.Price = price;
         }
 
         [When(@"the sale is completed")]
@@ -37,14 +37,14 @@ namespace LoppisSpecs.Steps
         public void ThenAnItemWithIdAndPriceShouldBeAddedToTheList(int id, int price)
         {
             m_vm.ItemList.Count.Should().Be(1);
-            m_vm.ItemList[0].Item1.Should().Be(id);
-            m_vm.ItemList[0].Item2.Should().Be(price);
+            m_vm.ItemList[0].SellerId.Should().Be(id);
+            m_vm.ItemList[0].Price.Should().Be(price);
         }
 
         [Then(@"the sum should be (.*)")]
         public void ThenTheSumShouldBe(int sum)
         {
-            m_vm.Sum.Should().Be(sum);
+            m_vm.labelTotal.Should().Be(sum);
         }
     }
 }

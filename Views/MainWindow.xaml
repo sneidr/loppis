@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:loppis"
         mc:Ignorable="d"
-        Title="MainWindow" WindowStartupLocation="CenterScreen" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Background="#FF222020">
+        Title="MainWindow" WindowStartupLocation="CenterScreen" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Background="#FF222020" Loaded="Window_Loaded">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -25,8 +25,8 @@
                         <Setter Property="Margin" Value="50,0,0,0"/>
                     </Style>
                 </StackPanel.Resources>
-                <TextBox Width="300" Height="150" FontSize="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
-                <TextBox Width="300" Height="150" FontSize="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+                <TextBox Width="300" Height="150" FontSize="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding Path=CurrentEntry.SellerId, StringFormat='{}{0:#}'}"></TextBox>
+                <TextBox Width="300" Height="150" FontSize="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding Path=CurrentEntry.Price, StringFormat='{}{0:#}'}"></TextBox>
             </StackPanel>
             <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" Margin="100,0,100,0">
                 <StackPanel.Resources>
@@ -46,7 +46,7 @@
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
 
-            <ListBox x:Name="items" Grid.Row="0" VerticalAlignment="Stretch" BorderThickness="0">
+            <ListBox x:Name="items" Grid.Row="0" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding Path=ItemList}">
             </ListBox>
 
             <Grid Grid.Row ="1">
@@ -60,7 +60,7 @@
                 </Grid.ColumnDefinitions>
 
                 <Label x:Name="totalLabel"  BorderThickness="0" Height="100" Background="White" Grid.Column="0" Grid.Row="0" Content="Summa" VerticalContentAlignment="Bottom" FontSize="34"></Label>
-                <Label x:Name="total"  BorderThickness="0" Height="100" Background="White" Grid.Column="1" Grid.Row="0" Content="10000.00" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="80"></Label>
+                <Label x:Name="total"  BorderThickness="0" Height="100" Background="White" Grid.Column="1" Grid.Row="0" Content="{Binding Path=labelTotal}" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="80"></Label>
                 <Button x:Name="newSeller"  BorderThickness="0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Content="Klar" Height="100" Background="Green" FontSize="34"></Button>
             </Grid>
         </Grid>
