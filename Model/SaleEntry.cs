@@ -1,16 +1,16 @@
-﻿using System;
-using System.ComponentModel;
+﻿using Prism.Mvvm;
+using System;
 
 namespace loppis.Model
 {
-    public class SaleEntry : INotifyPropertyChanged, IEquatable<SaleEntry>
+    public class SaleEntry : BindableBase, IEquatable<SaleEntry>
     {
 
-        public SaleEntry() : this(0, 0)
+        public SaleEntry() : this(null, null)
         {
         }
 
-        public SaleEntry(int id, int price)
+        public SaleEntry(int? id, int? price)
         {
             m_sellerId = id;
             m_price = price;
@@ -18,48 +18,31 @@ namespace loppis.Model
 
         public void Clear()
         {
-            m_sellerId = 0;
-            m_price = 0;
+            SellerId = null;
+            Price = null;
         }
 
-        private int m_sellerId;
-        private int m_price;
+        private int? m_sellerId;
+        private int? m_price;
 
-        public int SellerId
+
+        public int? SellerId
         {
             get => m_sellerId;
 
             set
             {
-                if (m_sellerId != value)
-                {
-                    m_sellerId = value;
-                    RaisePropertyChanged("SellerId");
-                }
+                SetProperty(ref m_sellerId, value);
             }
         }
 
-        public int Price
+        public int? Price
         {
             get => m_price;
 
             set
             {
-                if (m_price != value)
-                {
-                    m_price = value;
-                    RaisePropertyChanged("Price");
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
+                SetProperty(ref m_price, value);
             }
         }
 
