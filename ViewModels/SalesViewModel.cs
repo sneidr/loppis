@@ -14,6 +14,21 @@ namespace loppis.ViewModels
         private ObservableCollection<SaleEntry> itemList;
         private bool m_idSelected;
 
+        private bool sellerIdFocused;
+
+        public bool SellerIdFocused
+        {
+            get => sellerIdFocused;
+            set => SetProperty(ref sellerIdFocused, value);
+        }
+
+        private bool priceFocused;
+
+        public bool PriceFocused
+        {
+            get => priceFocused;
+            set => SetProperty(ref priceFocused, value);
+        }
 
 
         public SalesViewModel()
@@ -22,6 +37,19 @@ namespace loppis.ViewModels
             ItemList = new ObservableCollection<SaleEntry>();
 
             EnterSaleCommand = new DelegateCommand(ExecuteEntry, CanExecuteEntry);
+            MoveFocusCommand = new DelegateCommand(ExecuteMove, CanExecuteMove);
+            SellerIdFocused = true;
+        }
+
+        private bool CanExecuteMove()
+        {
+            return CurrentEntry.SellerId != null && CurrentEntry.SellerId > 0;
+        }
+
+        private void ExecuteMove()
+        {
+            PriceFocused = true;
+            SellerIdFocused = false;
         }
 
         private bool CanExecuteEntry()
@@ -45,8 +73,11 @@ namespace loppis.ViewModels
             var total = ItemList.Sum(i => i.Price);
             labelTotal = total != null ? (int)total : 0;
             CurrentEntry.Clear();
+            SellerIdFocused = true;
+            PriceFocused = false;
         }
 
         public ICommand EnterSaleCommand { get; set; }
+        public ICommand MoveFocusCommand { get; set; }
     }
 }
