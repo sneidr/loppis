@@ -14,7 +14,7 @@ namespace LoppisTest
             vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
 
-            Assert.AreEqual(vm.labelTotal, 62);
+            Assert.AreEqual(vm.SumTotal, 62);
         }
 
         [TestMethod]
@@ -51,7 +51,7 @@ namespace LoppisTest
             vm.CurrentEntry.SellerId = 15;
             vm.EnterSale();
 
-            Assert.AreEqual(vm.labelTotal, 62 + 55);
+            Assert.AreEqual(vm.SumTotal, 62 + 55);
         }
 
         [TestMethod]

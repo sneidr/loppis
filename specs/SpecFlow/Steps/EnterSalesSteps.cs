@@ -44,7 +44,7 @@ namespace LoppisSpecs.Steps
         [Then(@"the sum should be (.*)")]
         public void ThenTheSumShouldBe(int sum)
         {
-            m_vm.labelTotal.Should().Be(sum);
+            m_vm.SumTotal.Should().Be(sum);
         }
     }
 }

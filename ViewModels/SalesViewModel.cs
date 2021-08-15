@@ -10,7 +10,7 @@ namespace loppis.ViewModels
     public class SalesViewModel : BindableBase
     {
         private SaleEntry currentEntry;
-        private int labelTotal1;
+        private int sumTotal;
         private ObservableCollection<SaleEntry> itemList;
         private bool m_idSelected;
 
@@ -70,12 +70,12 @@ namespace loppis.ViewModels
 
         private bool CanExecuteRoundUp()
         {
-            return labelTotal != 0 && CurrentEntry.Price == null && CurrentEntry.SellerId == null;
+            return SumTotal != 0 && CurrentEntry.Price == null && CurrentEntry.SellerId == null;
         }
 
         private void ExecuteRoundUp()
         {
-            var rest = labelTotal % 50;
+            var rest = SumTotal % 50;
             if (rest != 0)
             {
                 CurrentEntry.SellerId = 200;
@@ -106,7 +106,7 @@ namespace loppis.ViewModels
         }
 
         public SaleEntry CurrentEntry { get => currentEntry; set => SetProperty(ref currentEntry, value); }
-        public int labelTotal { get => labelTotal1; set => SetProperty(ref labelTotal1, value); }
+        public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
         public ObservableCollection<SaleEntry> ItemList { get => itemList; set => SetProperty(ref itemList, value); }
         public bool IdSelected { get => m_idSelected; set => SetProperty(ref m_idSelected, value); }
 
@@ -114,7 +114,7 @@ namespace loppis.ViewModels
         {
             ItemList.Add(new SaleEntry(CurrentEntry.SellerId, CurrentEntry.Price));
             var total = ItemList.Sum(i => i.Price);
-            labelTotal = total != null ? (int)total : 0;
+            SumTotal = total != null ? (int)total : 0;
             CurrentEntry.Clear();
             SellerIdFocused = true;
             PriceFocused = false;
