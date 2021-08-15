@@ -38,7 +38,50 @@ namespace loppis.ViewModels
 
             EnterSaleCommand = new DelegateCommand(ExecuteEntry, CanExecuteEntry);
             MoveFocusCommand = new DelegateCommand(ExecuteMove, CanExecuteMove);
+            RoundUpCommand = new DelegateCommand(ExecuteRoundUp, CanExecuteRoundUp);
+            BagCommand = new DelegateCommand(ExecuteBag, CanExecuteBag);
+            CardCommand = new DelegateCommand(ExecuteCard, CanExecuteCard);
             SellerIdFocused = true;
+        }
+
+        private bool CanExecuteCard()
+        {
+            return CanExecuteRoundUp();
+        }
+
+        private void ExecuteCard()
+        {
+            CurrentEntry.SellerId = 150;
+            CurrentEntry.Price = 15;
+            ExecuteMove();
+        }
+
+        private bool CanExecuteBag()
+        {
+            return CanExecuteRoundUp();
+        }
+
+        private void ExecuteBag()
+        {
+            CurrentEntry.SellerId = 100;
+            CurrentEntry.Price = 5;
+            ExecuteMove();
+        }
+
+        private bool CanExecuteRoundUp()
+        {
+            return labelTotal != 0 && CurrentEntry.Price == null && CurrentEntry.SellerId == null;
+        }
+
+        private void ExecuteRoundUp()
+        {
+            var rest = labelTotal % 50;
+            if (rest != 0)
+            {
+                CurrentEntry.SellerId = 200;
+                CurrentEntry.Price = (50 - rest);
+            }
+            ExecuteMove();
         }
 
         private bool CanExecuteMove()
@@ -79,5 +122,8 @@ namespace loppis.ViewModels
 
         public ICommand EnterSaleCommand { get; set; }
         public ICommand MoveFocusCommand { get; set; }
+        public ICommand RoundUpCommand { get; set; }
+        public ICommand BagCommand { get; set; }
+        public ICommand CardCommand { get; set; }
     }
 }

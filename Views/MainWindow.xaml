@@ -51,10 +51,30 @@
                         <Setter Property="Margin" Value="10,0,10,0"/>
                     </Style>
                 </StackPanel.Resources>
-                <Button Background="BlueViolet" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kort"></Button>
-                <Button Background="Orange" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kasse"></Button>
-                <Button Background="Red" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Avrunda"></Button>
-                <Button Background="DeepSkyBlue" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Annat"></Button>
+                <Button Background="BlueViolet" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kort">
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="Click">
+                            <Behaviors:InvokeCommandAction Command="{Binding CardCommand}"/>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
+                </Button>
+                <Button Background="Orange" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kasse">
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="Click">
+                            <Behaviors:InvokeCommandAction Command="{Binding BagCommand}"/>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
+                </Button>
+                <Button Background="Red" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Avrunda">
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="Click">
+                            <Behaviors:InvokeCommandAction Command="{Binding RoundUpCommand}"/>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
+                </Button>
+                <Button Background="DeepSkyBlue" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Annat">
+
+                </Button>
             </StackPanel>
         </Grid>
         <Grid Grid.Column ="1">
@@ -79,13 +99,8 @@
 
                 <Label x:Name="totalLabel"  BorderThickness="0" Height="100" Background="White" Grid.Column="0" Grid.Row="0" Content="Summa" VerticalContentAlignment="Bottom" FontSize="34"></Label>
                 <Label x:Name="total"  BorderThickness="0" Height="100" Background="White" Grid.Column="1" Grid.Row="0" Content="{Binding labelTotal}" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="80"></Label>
-                <Button x:Name="newSeller"  BorderThickness="0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Content="Klar" Height="100" Background="Green" FontSize="34">
-                    <Behaviors:Interaction.Triggers>
-                        <Behaviors:EventTrigger EventName="Click">
-                            <Behaviors:InvokeCommandAction Command="{Binding EnterSaleCommand}"/>
-                        </Behaviors:EventTrigger>
-                    </Behaviors:Interaction.Triggers>
-                </Button>
+                <Button x:Name="newSeller"  BorderThickness="0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Content="Klar" Height="100" Background="Green" FontSize="34"/>
+
             </Grid>
         </Grid>
     </Grid>
