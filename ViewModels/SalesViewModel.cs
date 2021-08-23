@@ -46,7 +46,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteCard()
         {
-            return CanExecuteRoundUp();
+            return CanExecuteBag();
         }
 
         private void ExecuteCard()
@@ -58,7 +58,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteBag()
         {
-            return CanExecuteRoundUp();
+            return CurrentEntry.Price == null && CurrentEntry.SellerId == null;
         }
 
         private void ExecuteBag()
@@ -97,6 +97,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteEntry()
         {
+
             return CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null && CurrentEntry.SellerId > 0;
         }
 
