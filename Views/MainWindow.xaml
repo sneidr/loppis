@@ -73,7 +73,6 @@
                     </Behaviors:Interaction.Triggers>
                 </Button>
                 <Button Background="DeepSkyBlue" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Annat" Focusable="False">
-
                 </Button>
             </StackPanel>
         </Grid>

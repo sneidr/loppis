@@ -58,7 +58,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteBag()
         {
-            return CurrentEntry.Price == null && CurrentEntry.SellerId == null;
+            return true;
         }
 
         private void ExecuteBag()
@@ -70,17 +70,14 @@ namespace loppis.ViewModels
 
         private bool CanExecuteRoundUp()
         {
-            return SumTotal != 0 && CurrentEntry.Price == null && CurrentEntry.SellerId == null;
+            return (SumTotal % 50) != 0;
         }
 
         private void ExecuteRoundUp()
         {
             var rest = SumTotal % 50;
-            if (rest != 0)
-            {
-                CurrentEntry.SellerId = 200;
-                CurrentEntry.Price = (50 - rest);
-            }
+            CurrentEntry.SellerId = 200;
+            CurrentEntry.Price = (50 - rest);
             ExecuteMove();
         }
 

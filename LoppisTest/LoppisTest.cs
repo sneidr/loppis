@@ -76,11 +76,11 @@ namespace LoppisTest
             Assert.IsTrue(vm.BagCommand.CanExecute(null));
 
             vm.CurrentEntry.Price = 12;
-            Assert.IsFalse(vm.BagCommand.CanExecute(null));
+            Assert.IsTrue(vm.BagCommand.CanExecute(null));
 
             vm.CurrentEntry.Clear();
             vm.CurrentEntry.SellerId = 43;
-            Assert.IsFalse(vm.BagCommand.CanExecute(null));
+            Assert.IsTrue(vm.BagCommand.CanExecute(null));
 
             vm.CurrentEntry.Clear();
             Assert.IsTrue(vm.BagCommand.CanExecute(null));
@@ -107,11 +107,11 @@ namespace LoppisTest
             Assert.IsTrue(vm.CardCommand.CanExecute(null));
 
             vm.CurrentEntry.Price = 12;
-            Assert.IsFalse(vm.CardCommand.CanExecute(null));
+            Assert.IsTrue(vm.CardCommand.CanExecute(null));
 
             vm.CurrentEntry.Clear();
             vm.CurrentEntry.SellerId = 43;
-            Assert.IsFalse(vm.CardCommand.CanExecute(null));
+            Assert.IsTrue(vm.CardCommand.CanExecute(null));
 
             vm.CurrentEntry.Clear();
             Assert.IsTrue(vm.CardCommand.CanExecute(null));
@@ -140,7 +140,7 @@ namespace LoppisTest
             {
                 Assert.Fail();
             }
-            Assert.IsFalse(vm.CardCommand.CanExecute(null));
+            Assert.IsTrue(vm.CardCommand.CanExecute(null));
 
             Assert.IsTrue(vm.PriceFocused);
             Assert.IsFalse(vm.SellerIdFocused);
@@ -155,9 +155,6 @@ namespace LoppisTest
             SalesViewModel vm = new SalesViewModel();
             Assert.IsFalse(vm.RoundUpCommand.CanExecute(null));
 
-            vm.SumTotal = 25;
-            Assert.IsTrue(vm.RoundUpCommand.CanExecute(null));
-
             vm.CurrentEntry.Price = 12;
             Assert.IsFalse(vm.RoundUpCommand.CanExecute(null));
 
@@ -165,8 +162,21 @@ namespace LoppisTest
             vm.CurrentEntry.SellerId = 43;
             Assert.IsFalse(vm.RoundUpCommand.CanExecute(null));
 
+            vm.SumTotal = 25;
+            Assert.IsTrue(vm.RoundUpCommand.CanExecute(null));
+
+            vm.CurrentEntry.Price = 12;
+            Assert.IsTrue(vm.RoundUpCommand.CanExecute(null));
+
+            vm.CurrentEntry.Clear();
+            vm.CurrentEntry.SellerId = 43;
+            Assert.IsTrue(vm.RoundUpCommand.CanExecute(null));
+
             vm.CurrentEntry.Clear();
             Assert.IsTrue(vm.RoundUpCommand.CanExecute(null));
+
+            vm.SumTotal = 50;
+            Assert.IsFalse(vm.RoundUpCommand.CanExecute(null));
         }
 
         [TestMethod]
@@ -183,6 +193,24 @@ namespace LoppisTest
             Assert.AreEqual(vm.CurrentEntry.SellerId, 200);
             Assert.IsFalse(vm.SellerIdFocused);
             Assert.IsTrue(vm.PriceFocused);
+        }
+
+        [TestMethod]
+        public void TestRoundUpCommand_Execute_DivisibleBy50()
+        {
+            SalesViewModel vm = new SalesViewModel();
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 50;
+            vm.EnterSaleCommand.Execute(null);
+            if (vm.RoundUpCommand.CanExecute(null))
+            {
+                vm.RoundUpCommand.Execute(null);
+            }
+            Assert.AreEqual(vm.SumTotal, 50);
+            Assert.IsNull(vm.CurrentEntry.Price);
+            Assert.IsNull(vm.CurrentEntry.SellerId);
+            Assert.IsTrue(vm.SellerIdFocused);
+            Assert.IsFalse(vm.PriceFocused);
         }
 
         #endregion
