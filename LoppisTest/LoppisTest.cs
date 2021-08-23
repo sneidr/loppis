@@ -1,6 +1,8 @@
-﻿using loppis.ViewModels;
+﻿using loppis.Model;
+using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-
+using System.IO;
+using System.Xml.Serialization;
 namespace LoppisTest
 {
     [TestClass]
@@ -214,5 +216,40 @@ namespace LoppisTest
         }
 
         #endregion
+
+        #region SaveToFileCommand
+        [TestMethod]
+        public void TestSaveToFile_CanExecute()
+        {
+            SalesViewModel vm = new SalesViewModel();
+            Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
+
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 80;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+        }
+
+        [TestMethod]
+        public void TestSaveToFile_Execute()
+        {
+            SalesViewModel vm = new SalesViewModel();
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 80;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+
+            vm.SaveToFileCommand.Execute(null);
+
+            var reader = new XmlSerializer(typeof(SaleEntry));
+            StreamReader sr = new StreamReader(@".\myfile.xml");
+            SaleEntry saleEntry = (SaleEntry)reader.Deserialize(sr);
+            sr.Close();
+
+            Assert.AreEqual(saleEntry.SellerId, 12);
+            Assert.AreEqual(saleEntry.Price, 80);
+        }
+        #endregion
+
     }
 }

@@ -2,8 +2,10 @@
 using Prism.Commands;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using System.Xml.Serialization;
 
 namespace loppis.ViewModels
 {
@@ -41,7 +43,23 @@ namespace loppis.ViewModels
             RoundUpCommand = new DelegateCommand(ExecuteRoundUp, CanExecuteRoundUp);
             BagCommand = new DelegateCommand(ExecuteBag, CanExecuteBag);
             CardCommand = new DelegateCommand(ExecuteCard, CanExecuteCard);
+            SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
             SellerIdFocused = true;
+        }
+
+        private bool CanExecuteSaveToFile()
+        {
+            return SumTotal > 0 && ItemList.Count > 0;
+        }
+
+        private void ExecuteSaveToFile()
+        {
+            StreamWriter sw = new StreamWriter(@".\myfile.xml");
+            XmlSerializer writer = new XmlSerializer(typeof(SaleEntry));
+
+            writer.Serialize(sw, ItemList[0]);
+
+            sw.Close();
         }
 
         private bool CanExecuteCard()
@@ -123,5 +141,6 @@ namespace loppis.ViewModels
         public ICommand RoundUpCommand { get; set; }
         public ICommand BagCommand { get; set; }
         public ICommand CardCommand { get; set; }
+        public ICommand SaveToFileCommand { get; set; }
     }
 }

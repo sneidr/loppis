@@ -98,8 +98,13 @@
 
                 <Label x:Name="totalLabel"  BorderThickness="0" Height="100" Background="White" Grid.Column="0" Grid.Row="0" Content="Summa" VerticalContentAlignment="Bottom" FontSize="34"></Label>
                 <Label x:Name="total"  BorderThickness="0" Height="100" Background="White" Grid.Column="1" Grid.Row="0" Content="{Binding SumTotal}" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="80"></Label>
-                <Button x:Name="newSeller"  BorderThickness="0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Content="Klar" Height="100" Background="Green" FontSize="34"/>
-
+                <Button x:Name="newSeller"  BorderThickness="0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Content="Klar" Height="100" Background="Green" FontSize="34">
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="Click">
+                            <Behaviors:InvokeCommandAction Command="{Binding SaveToFileCommand}"/>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
+                </Button>
             </Grid>
         </Grid>
     </Grid>
