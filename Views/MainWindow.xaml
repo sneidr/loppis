@@ -51,28 +51,28 @@
                         <Setter Property="Margin" Value="10,0,10,0"/>
                     </Style>
                 </StackPanel.Resources>
-                <Button Background="BlueViolet" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kort">
+                <Button Background="BlueViolet" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kort" Focusable="False">
                     <Behaviors:Interaction.Triggers>
                         <Behaviors:EventTrigger EventName="Click">
                             <Behaviors:InvokeCommandAction Command="{Binding CardCommand}"/>
                         </Behaviors:EventTrigger>
                     </Behaviors:Interaction.Triggers>
                 </Button>
-                <Button Background="Orange" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kasse">
+                <Button Background="Orange" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Kasse" Focusable="False">
                     <Behaviors:Interaction.Triggers>
                         <Behaviors:EventTrigger EventName="Click">
                             <Behaviors:InvokeCommandAction Command="{Binding BagCommand}"/>
                         </Behaviors:EventTrigger>
                     </Behaviors:Interaction.Triggers>
                 </Button>
-                <Button Background="Red" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Avrunda">
+                <Button Background="Red" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Avrunda" Focusable="False">
                     <Behaviors:Interaction.Triggers>
                         <Behaviors:EventTrigger EventName="Click">
                             <Behaviors:InvokeCommandAction Command="{Binding RoundUpCommand}"/>
                         </Behaviors:EventTrigger>
                     </Behaviors:Interaction.Triggers>
                 </Button>
-                <Button Background="DeepSkyBlue" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Annat">
+                <Button Background="DeepSkyBlue" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Annat" Focusable="False">
 
                 </Button>
             </StackPanel>
