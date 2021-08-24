@@ -37,11 +37,13 @@
                 <TextBox Width="300" Height="150" FontSize="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding CurrentEntry.SellerId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" local:FocusExtension.IsFocused="{Binding SellerIdFocused}">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding MoveFocusCommand}"/>
+                        <KeyBinding Key="Space" Command="{Binding SaveToFileCommand}"/>
                     </TextBox.InputBindings>
                 </TextBox>
                 <TextBox Width="300" Height="150" FontSize="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding CurrentEntry.Price, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" local:FocusExtension.IsFocused="{Binding PriceFocused}">
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding EnterSaleCommand}"/>
+                        <KeyBinding Key="Space" Command="{Binding SaveToFileCommand}"/>
                     </TextBox.InputBindings>
                 </TextBox>
             </StackPanel>

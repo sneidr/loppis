@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using System.Xml.Serialization;
+using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
 
 namespace loppis.ViewModels
 {
@@ -46,7 +47,6 @@ namespace loppis.ViewModels
             SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
             SellerIdFocused = true;
         }
-
         private bool CanExecuteSaveToFile()
         {
             return SumTotal > 0 && ItemList.Count > 0;
@@ -54,21 +54,23 @@ namespace loppis.ViewModels
 
         private void ExecuteSaveToFile()
         {
-            var entries = new ObservableCollection<SaleEntry>();
+            var entries = new SaveList();
             using (var filestream = new FileStream(@".\myfile.xml", FileMode.OpenOrCreate))
             {
                 if (filestream.Length > 0)
                 {
-                    var xmlreader = new XmlSerializer(typeof(ObservableCollection<SaleEntry>));
-                    entries = (ObservableCollection<SaleEntry>)xmlreader.Deserialize(filestream);
+                    var xmlreader = new XmlSerializer(typeof(SaveList));
+                    entries = (SaveList)xmlreader.Deserialize(filestream);
                 }
             }
             using (var filestream = new FileStream(@".\myfile.xml", FileMode.Truncate))
             {
-                entries.Add(ItemList.Last());
-                var xmlwriter = new XmlSerializer(typeof(ObservableCollection<SaleEntry>));
-                xmlwriter.Serialize(filestream, (ObservableCollection<SaleEntry>)entries);
+                entries.Add(ItemList);
+                var xmlwriter = new XmlSerializer(typeof(SaveList));
+                xmlwriter.Serialize(filestream, (SaveList)entries);
             }
+            ItemList.Clear();
+            SumTotal = 0;
         }
 
         private bool CanExecuteCard()

@@ -1,9 +1,8 @@
-﻿using loppis.Model;
-using loppis.ViewModels;
+﻿using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
+using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
 
 namespace LoppisTest
 {
@@ -245,26 +244,32 @@ namespace LoppisTest
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
-            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
-            vm.SaveToFileCommand.Execute(null);
-
             vm.CurrentEntry.SellerId = 15;
             vm.CurrentEntry.Price = 90;
             vm.EnterSale();
             Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
             vm.SaveToFileCommand.Execute(null);
 
-            var entries = new ObservableCollection<SaleEntry>();
+            vm.CurrentEntry.SellerId = 20;
+            vm.CurrentEntry.Price = 100;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+
+            var entries = new SaveList();
             using (var filestream = new FileStream(testFileName, FileMode.Open))
             {
-                var xmlreader = new XmlSerializer(typeof(ObservableCollection<SaleEntry>));
-                entries = (ObservableCollection<SaleEntry>)xmlreader.Deserialize(filestream);
+                var xmlreader = new XmlSerializer(typeof(SaveList));
+                entries = (SaveList)xmlreader.Deserialize(filestream);
             }
 
-            Assert.AreEqual(entries[0].SellerId, 12);
-            Assert.AreEqual(entries[0].Price, 80);
-            Assert.AreEqual(entries[1].SellerId, 15);
-            Assert.AreEqual(entries[1].Price, 90);
+            Assert.AreEqual(entries[0][0].SellerId, 12);
+            Assert.AreEqual(entries[0][0].Price, 80);
+            Assert.AreEqual(entries[0][1].SellerId, 15);
+            Assert.AreEqual(entries[0][1].Price, 90);
+            Assert.AreEqual(entries[1][0].SellerId, 20);
+            Assert.AreEqual(entries[1][0].Price, 100);
+            Assert.AreEqual(vm.SumTotal, 0);
         }
         #endregion
 
