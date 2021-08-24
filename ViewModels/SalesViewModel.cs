@@ -139,7 +139,7 @@ namespace loppis.ViewModels
 
         public void EnterSale()
         {
-            ItemList.Add(new SaleEntry(CurrentEntry.SellerId, CurrentEntry.Price));
+            ItemList.Insert(0, new SaleEntry(CurrentEntry.SellerId, CurrentEntry.Price));
             var total = ItemList.Sum(i => i.Price);
             SumTotal = total != null ? (int)total : 0;
             CurrentEntry.Clear();

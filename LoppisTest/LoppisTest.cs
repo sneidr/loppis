@@ -57,6 +57,8 @@ namespace LoppisTest
             vm.EnterSale();
 
             Assert.AreEqual(vm.SumTotal, 62 + 55);
+            Assert.AreEqual(vm.ItemList[0].Price, 55);
+            Assert.AreEqual(vm.ItemList[1].Price, 62);
         }
 
         [TestMethod]
@@ -263,10 +265,10 @@ namespace LoppisTest
                 entries = (SaveList)xmlreader.Deserialize(filestream);
             }
 
-            Assert.AreEqual(entries[0][0].SellerId, 12);
-            Assert.AreEqual(entries[0][0].Price, 80);
-            Assert.AreEqual(entries[0][1].SellerId, 15);
-            Assert.AreEqual(entries[0][1].Price, 90);
+            Assert.AreEqual(entries[0][0].SellerId, 15);
+            Assert.AreEqual(entries[0][0].Price, 90);
+            Assert.AreEqual(entries[0][1].SellerId, 12);
+            Assert.AreEqual(entries[0][1].Price, 80);
             Assert.AreEqual(entries[1][0].SellerId, 20);
             Assert.AreEqual(entries[1][0].Price, 100);
             Assert.AreEqual(vm.SumTotal, 0);
