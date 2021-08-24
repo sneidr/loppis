@@ -1,13 +1,16 @@
 ﻿using loppis.Model;
 using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
+
 namespace LoppisTest
 {
     [TestClass]
     public class LoppisTest
     {
+        private const string testFileName = @".\myfile.xml";
         #region EnterSale Tests
         [TestMethod]
         public void TestEnterOneSale_SumIsEqualToPrice()
@@ -233,21 +236,35 @@ namespace LoppisTest
         [TestMethod]
         public void TestSaveToFile_Execute()
         {
+            if (File.Exists(testFileName))
+            {
+                File.Delete(testFileName);
+            }
+
             SalesViewModel vm = new SalesViewModel();
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
             Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
-
             vm.SaveToFileCommand.Execute(null);
 
-            var reader = new XmlSerializer(typeof(SaleEntry));
-            StreamReader sr = new StreamReader(@".\myfile.xml");
-            SaleEntry saleEntry = (SaleEntry)reader.Deserialize(sr);
-            sr.Close();
+            vm.CurrentEntry.SellerId = 15;
+            vm.CurrentEntry.Price = 90;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
 
-            Assert.AreEqual(saleEntry.SellerId, 12);
-            Assert.AreEqual(saleEntry.Price, 80);
+            var entries = new ObservableCollection<SaleEntry>();
+            using (var filestream = new FileStream(testFileName, FileMode.Open))
+            {
+                var xmlreader = new XmlSerializer(typeof(ObservableCollection<SaleEntry>));
+                entries = (ObservableCollection<SaleEntry>)xmlreader.Deserialize(filestream);
+            }
+
+            Assert.AreEqual(entries[0].SellerId, 12);
+            Assert.AreEqual(entries[0].Price, 80);
+            Assert.AreEqual(entries[1].SellerId, 15);
+            Assert.AreEqual(entries[1].Price, 90);
         }
         #endregion
 

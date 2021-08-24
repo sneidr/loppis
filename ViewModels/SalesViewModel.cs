@@ -54,12 +54,21 @@ namespace loppis.ViewModels
 
         private void ExecuteSaveToFile()
         {
-            StreamWriter sw = new StreamWriter(@".\myfile.xml");
-            XmlSerializer writer = new XmlSerializer(typeof(SaleEntry));
-
-            writer.Serialize(sw, ItemList[0]);
-
-            sw.Close();
+            var entries = new ObservableCollection<SaleEntry>();
+            using (var filestream = new FileStream(@".\myfile.xml", FileMode.OpenOrCreate))
+            {
+                if (filestream.Length > 0)
+                {
+                    var xmlreader = new XmlSerializer(typeof(ObservableCollection<SaleEntry>));
+                    entries = (ObservableCollection<SaleEntry>)xmlreader.Deserialize(filestream);
+                }
+            }
+            using (var filestream = new FileStream(@".\myfile.xml", FileMode.Truncate))
+            {
+                entries.Add(ItemList.Last());
+                var xmlwriter = new XmlSerializer(typeof(ObservableCollection<SaleEntry>));
+                xmlwriter.Serialize(filestream, (ObservableCollection<SaleEntry>)entries);
+            }
         }
 
         private bool CanExecuteCard()

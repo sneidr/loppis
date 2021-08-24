@@ -25,7 +25,6 @@ namespace loppis.Model
         private int? m_sellerId;
         private int? m_price;
 
-
         public int? SellerId
         {
             get => m_sellerId;
