@@ -60,12 +60,26 @@ namespace loppis.ViewModels
                 if (filestream.Length > 0)
                 {
                     var xmlreader = new XmlSerializer(typeof(SaveList));
-                    entries = (SaveList)xmlreader.Deserialize(filestream);
+                    try
+                    {
+                        entries = (SaveList)xmlreader.Deserialize(filestream);
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                        //TODO: Error bar at the top
+                        int i = 0;
+                        while (File.Exists($".\\myfile_error{++i}.xml"))
+                        {
+
+                        }
+                        File.Copy(@".\myfile.xml", $".\\myfile_error{i}.xml");
+                    }
                 }
             }
             using (var filestream = new FileStream(@".\myfile.xml", FileMode.Truncate))
             {
                 entries.Add(ItemList);
+
                 var xmlwriter = new XmlSerializer(typeof(SaveList));
                 xmlwriter.Serialize(filestream, (SaveList)entries);
             }

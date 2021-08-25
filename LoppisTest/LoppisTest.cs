@@ -273,6 +273,100 @@ namespace LoppisTest
             Assert.AreEqual(entries[1][0].Price, 100);
             Assert.AreEqual(vm.SumTotal, 0);
         }
+
+        [TestMethod]
+        public void TestSaveToFile_Execute_FileExists()
+        {
+            if (File.Exists(testFileName))
+            {
+                File.Delete(testFileName);
+            }
+            using (var fs = new FileStream(testFileName, FileMode.Create))
+            {
+            }
+
+            SalesViewModel vm = new SalesViewModel();
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 80;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+
+            var entries = new SaveList();
+            using (var filestream = new FileStream(testFileName, FileMode.Open))
+            {
+                var xmlreader = new XmlSerializer(typeof(SaveList));
+                entries = (SaveList)xmlreader.Deserialize(filestream);
+            }
+
+            Assert.AreEqual(entries[0][0].SellerId, 12);
+            Assert.AreEqual(entries[0][0].Price, 80);
+        }
+
+        [TestMethod]
+        public void TestSaveToFile_Execute_FileWrongFormat()
+        {
+            string testFirstErrorFileName = $"{Path.GetFileNameWithoutExtension(testFileName)}_error1{Path.GetExtension(testFileName)}";
+            string testSecondErrorFileName = $"{Path.GetFileNameWithoutExtension(testFileName)}_error2{Path.GetExtension(testFileName)}";
+
+            if (File.Exists(testFileName))
+            {
+                File.Delete(testFileName);
+            }
+            if (File.Exists(testFirstErrorFileName))
+            {
+                File.Delete(testFirstErrorFileName);
+            }
+            if (File.Exists(testSecondErrorFileName))
+            {
+                File.Delete(testSecondErrorFileName);
+            }
+            using (var streamWriter = new StreamWriter(testFileName))
+            {
+                streamWriter.WriteLine("ErrorText");
+            }
+
+            SalesViewModel vm = new SalesViewModel();
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 80;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+
+            var entries = new SaveList();
+            using (var filestream = new FileStream(testFileName, FileMode.Open))
+            {
+                var xmlreader = new XmlSerializer(typeof(SaveList));
+                entries = (SaveList)xmlreader.Deserialize(filestream);
+            }
+
+            Assert.AreEqual(entries[0][0].SellerId, 12);
+            Assert.AreEqual(entries[0][0].Price, 80);
+
+            Assert.IsTrue(File.Exists(testFirstErrorFileName));
+            Assert.IsFalse(File.Exists(testSecondErrorFileName));
+
+            File.Delete(testFileName);
+            File.Copy(testFirstErrorFileName, testFileName);
+
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 80;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+
+            entries = new SaveList();
+            using (var filestream = new FileStream(testFileName, FileMode.Open))
+            {
+                var xmlreader = new XmlSerializer(typeof(SaveList));
+                entries = (SaveList)xmlreader.Deserialize(filestream);
+            }
+
+            Assert.AreEqual(entries[0][0].SellerId, 12);
+            Assert.AreEqual(entries[0][0].Price, 80);
+
+            Assert.IsTrue(File.Exists(testSecondErrorFileName));
+        }
         #endregion
 
     }
