@@ -12,6 +12,7 @@ namespace loppis.ViewModels
 {
     public class SalesViewModel : BindableBase
     {
+        private const string cSaveFileName = @".\myfile.xml";
         private SaleEntry currentEntry;
         private int sumTotal;
         private ObservableCollection<SaleEntry> itemList;
@@ -54,8 +55,26 @@ namespace loppis.ViewModels
 
         private void ExecuteSaveToFile()
         {
+            SaveList entries = ReadFromXmlFile();
+            entries.Add(ItemList);
+            WriteToXmlFile(entries);
+            ItemList.Clear();
+            SumTotal = 0;
+        }
+
+        private static void WriteToXmlFile(SaveList entries)
+        {
+            using (var filestream = new FileStream(cSaveFileName, FileMode.Truncate))
+            {
+                var xmlwriter = new XmlSerializer(typeof(SaveList));
+                xmlwriter.Serialize(filestream, (SaveList)entries);
+            }
+        }
+
+        private static SaveList ReadFromXmlFile()
+        {
             var entries = new SaveList();
-            using (var filestream = new FileStream(@".\myfile.xml", FileMode.OpenOrCreate))
+            using (var filestream = new FileStream(cSaveFileName, FileMode.OpenOrCreate))
             {
                 if (filestream.Length > 0)
                 {
@@ -67,29 +86,50 @@ namespace loppis.ViewModels
                     catch (System.InvalidOperationException)
                     {
                         //TODO: Error bar at the top
-                        int i = 0;
-                        while (File.Exists($".\\myfile_error{++i}.xml"))
-                        {
-
-                        }
-                        File.Copy(@".\myfile.xml", $".\\myfile_error{i}.xml");
+                        CopyFileToErrorBackup();
                     }
                 }
             }
-            using (var filestream = new FileStream(@".\myfile.xml", FileMode.Truncate))
-            {
-                entries.Add(ItemList);
 
-                var xmlwriter = new XmlSerializer(typeof(SaveList));
-                xmlwriter.Serialize(filestream, (SaveList)entries);
+            return entries;
+        }
+
+        // Copies file to new error backup file
+        private static void CopyFileToErrorBackup()
+        {
+            int i = NextAvailableErrorFileNumber();
+            File.Copy(cSaveFileName, GetErrorFileName(i));
+        }
+
+        private static int NextAvailableErrorFileNumber()
+        {
+            int i = 0;
+            while (File.Exists(path: GetErrorFileName(++i)))
+            {
+                if (i > 100)
+                {
+                    // Defensive
+                    // Should never happen
+                    throw new IOException("Too many error files!");
+                }
             }
-            ItemList.Clear();
-            SumTotal = 0;
+
+            return i;
+        }
+
+        // Adds "_error<num> to cSaveFileName
+        private static string GetErrorFileName(int i)
+        {
+            string dir = Path.GetDirectoryName(cSaveFileName);
+            string fileName = Path.GetFileNameWithoutExtension(cSaveFileName);
+            string ext = Path.GetExtension(cSaveFileName);
+
+            return Path.Combine(dir, $"{fileName}_error{i}{ext}");
         }
 
         private bool CanExecuteCard()
         {
-            return CanExecuteBag();
+            return true;
         }
 
         private void ExecuteCard()

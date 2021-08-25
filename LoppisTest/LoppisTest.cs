@@ -1,5 +1,6 @@
 ﻿using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics;
 using System.IO;
 using System.Xml.Serialization;
 using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
@@ -366,6 +367,42 @@ namespace LoppisTest
             Assert.AreEqual(entries[0][0].Price, 80);
 
             Assert.IsTrue(File.Exists(testSecondErrorFileName));
+        }
+
+        [TestMethod]
+        [Ignore]
+        public void TestSaveToFile_Execute_Performance()
+        {
+            if (File.Exists(testFileName))
+            {
+                File.Delete(testFileName);
+            }
+            using (var fs = new FileStream(testFileName, FileMode.Create))
+            {
+            }
+
+            SalesViewModel vm = new SalesViewModel();
+
+            var stopwatch = new Stopwatch();
+            for (int i = 1; i <= 250; i++)
+            {
+                if (i == 241)
+                {
+                    stopwatch.Start();
+                }
+                for (int j = 1; j <= 20; j++)
+                {
+                    vm.CurrentEntry.SellerId = i;
+                    vm.CurrentEntry.Price = i;
+                    vm.EnterSale();
+                }
+                Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+                vm.SaveToFileCommand.Execute(null);
+            }
+            stopwatch.Stop();
+            var elapsed = stopwatch.ElapsedMilliseconds;
+
+            Assert.IsTrue(elapsed / 10 < 500, $"{elapsed} ms");
         }
         #endregion
 
