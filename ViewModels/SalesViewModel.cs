@@ -14,7 +14,7 @@ namespace loppis.ViewModels
     {
         #region Constants
 
-        private const string cDefaultSaveFileName = @".\myfile.xml";
+        private const string cDefaultSaveFileName = @".\transactions.xml";
 
         #endregion
 
