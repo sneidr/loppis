@@ -12,29 +12,32 @@ namespace loppis.ViewModels
 {
     public class SalesViewModel : BindableBase
     {
+        #region Constants
+
         private const string cDefaultSaveFileName = @".\myfile.xml";
+
+        #endregion
+
+        #region Properties
+
         private SaleEntry currentEntry;
         private int sumTotal;
         private ObservableCollection<SaleEntry> itemList;
         private bool m_idSelected;
-
         private bool sellerIdFocused;
-
-        public bool SellerIdFocused
-        {
-            get => sellerIdFocused;
-            set => SetProperty(ref sellerIdFocused, value);
-        }
-
         private bool priceFocused;
 
-        public bool PriceFocused
-        {
-            get => priceFocused;
-            set => SetProperty(ref priceFocused, value);
-        }
-
+        public bool SellerIdFocused { get => sellerIdFocused; set => SetProperty(ref sellerIdFocused, value); }
+        public bool PriceFocused { get => priceFocused; set => SetProperty(ref priceFocused, value); }
         public string SaveFileName { get; set; }
+        public SaleEntry CurrentEntry { get => currentEntry; set => SetProperty(ref currentEntry, value); }
+        public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
+        public ObservableCollection<SaleEntry> ItemList { get => itemList; set => SetProperty(ref itemList, value); }
+        public bool IdSelected { get => m_idSelected; set => SetProperty(ref m_idSelected, value); }
+
+        #endregion
+
+        #region Construction
 
         public SalesViewModel(string testFileName = cDefaultSaveFileName)
         {
@@ -50,6 +53,22 @@ namespace loppis.ViewModels
             SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
             SellerIdFocused = true;
         }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand SaveToFileCommand { get; set; }
+        public ICommand CardCommand { get; set; }
+        public ICommand BagCommand { get; set; }
+        public ICommand RoundUpCommand { get; set; }
+        public ICommand MoveFocusCommand { get; set; }
+        public ICommand EnterSaleCommand { get; set; }
+
+
+        #region SaveToFile Command
+
+
         private bool CanExecuteSaveToFile()
         {
             return SumTotal > 0 && ItemList.Count > 0;
@@ -129,6 +148,10 @@ namespace loppis.ViewModels
             return Path.Combine(dir, $"{fileName}_error{i}{ext}");
         }
 
+        #endregion
+
+        #region Card Command
+
         private bool CanExecuteCard()
         {
             return true;
@@ -141,6 +164,10 @@ namespace loppis.ViewModels
             ExecuteMove();
         }
 
+        #endregion
+
+        #region Bag Command
+
         private bool CanExecuteBag()
         {
             return true;
@@ -152,6 +179,10 @@ namespace loppis.ViewModels
             CurrentEntry.Price = 5;
             ExecuteMove();
         }
+
+        #endregion
+
+        #region RoundUp Command
 
         private bool CanExecuteRoundUp()
         {
@@ -166,6 +197,10 @@ namespace loppis.ViewModels
             ExecuteMove();
         }
 
+        #endregion
+
+        #region Move Command
+
         private bool CanExecuteMove()
         {
             return CurrentEntry.SellerId != null && CurrentEntry.SellerId > 0;
@@ -176,6 +211,10 @@ namespace loppis.ViewModels
             PriceFocused = true;
             SellerIdFocused = false;
         }
+
+        #endregion
+
+        #region EnterSale Command
 
         private bool CanExecuteEntry()
         {
@@ -188,11 +227,6 @@ namespace loppis.ViewModels
             EnterSale();
         }
 
-        public SaleEntry CurrentEntry { get => currentEntry; set => SetProperty(ref currentEntry, value); }
-        public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
-        public ObservableCollection<SaleEntry> ItemList { get => itemList; set => SetProperty(ref itemList, value); }
-        public bool IdSelected { get => m_idSelected; set => SetProperty(ref m_idSelected, value); }
-
         public void EnterSale()
         {
             ItemList.Insert(0, new SaleEntry(CurrentEntry.SellerId, CurrentEntry.Price));
@@ -203,11 +237,9 @@ namespace loppis.ViewModels
             PriceFocused = false;
         }
 
-        public ICommand EnterSaleCommand { get; set; }
-        public ICommand MoveFocusCommand { get; set; }
-        public ICommand RoundUpCommand { get; set; }
-        public ICommand BagCommand { get; set; }
-        public ICommand CardCommand { get; set; }
-        public ICommand SaveToFileCommand { get; set; }
+
+        #endregion
+
+        #endregion
     }
 }
