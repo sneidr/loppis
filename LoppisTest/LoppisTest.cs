@@ -10,7 +10,8 @@ namespace LoppisTest
     [TestClass]
     public class LoppisTest
     {
-        private const string testFileName = @".\myfile.xml";
+        private const string testFileName = @".\mytestfile.xml";
+
         #region EnterSale Tests
         [TestMethod]
         public void TestEnterOneSale_SumIsEqualToPrice()
@@ -226,7 +227,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestSaveToFile_CanExecute()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new SalesViewModel(testFileName);
             Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
 
             vm.CurrentEntry.SellerId = 12;
@@ -243,7 +244,7 @@ namespace LoppisTest
                 File.Delete(testFileName);
             }
 
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new SalesViewModel(testFileName);
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
@@ -286,7 +287,7 @@ namespace LoppisTest
             {
             }
 
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new SalesViewModel(testFileName);
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
@@ -327,7 +328,7 @@ namespace LoppisTest
                 streamWriter.WriteLine("ErrorText");
             }
 
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new SalesViewModel(testFileName);
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
@@ -381,7 +382,7 @@ namespace LoppisTest
             {
             }
 
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new SalesViewModel(testFileName);
 
             var stopwatch = new Stopwatch();
             for (int i = 1; i <= 250; i++)

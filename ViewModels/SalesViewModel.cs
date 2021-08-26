@@ -12,7 +12,7 @@ namespace loppis.ViewModels
 {
     public class SalesViewModel : BindableBase
     {
-        private const string cSaveFileName = @".\myfile.xml";
+        private const string cDefaultSaveFileName = @".\myfile.xml";
         private SaleEntry currentEntry;
         private int sumTotal;
         private ObservableCollection<SaleEntry> itemList;
@@ -34,9 +34,11 @@ namespace loppis.ViewModels
             set => SetProperty(ref priceFocused, value);
         }
 
+        public string SaveFileName { get; set; }
 
-        public SalesViewModel()
+        public SalesViewModel(string testFileName = cDefaultSaveFileName)
         {
+            SaveFileName = testFileName;
             CurrentEntry = new SaleEntry();
             ItemList = new ObservableCollection<SaleEntry>();
 
@@ -62,19 +64,19 @@ namespace loppis.ViewModels
             SumTotal = 0;
         }
 
-        private static void WriteToXmlFile(SaveList entries)
+        private void WriteToXmlFile(SaveList entries)
         {
-            using (var filestream = new FileStream(cSaveFileName, FileMode.Truncate))
+            using (var filestream = new FileStream(SaveFileName, FileMode.Truncate))
             {
                 var xmlwriter = new XmlSerializer(typeof(SaveList));
                 xmlwriter.Serialize(filestream, (SaveList)entries);
             }
         }
 
-        private static SaveList ReadFromXmlFile()
+        private SaveList ReadFromXmlFile()
         {
             var entries = new SaveList();
-            using (var filestream = new FileStream(cSaveFileName, FileMode.OpenOrCreate))
+            using (var filestream = new FileStream(SaveFileName, FileMode.OpenOrCreate))
             {
                 if (filestream.Length > 0)
                 {
@@ -95,13 +97,13 @@ namespace loppis.ViewModels
         }
 
         // Copies file to new error backup file
-        private static void CopyFileToErrorBackup()
+        private void CopyFileToErrorBackup()
         {
             int i = NextAvailableErrorFileNumber();
-            File.Copy(cSaveFileName, GetErrorFileName(i));
+            File.Copy(SaveFileName, GetErrorFileName(i));
         }
 
-        private static int NextAvailableErrorFileNumber()
+        private int NextAvailableErrorFileNumber()
         {
             int i = 0;
             while (File.Exists(path: GetErrorFileName(++i)))
@@ -118,11 +120,11 @@ namespace loppis.ViewModels
         }
 
         // Adds "_error<num> to cSaveFileName
-        private static string GetErrorFileName(int i)
+        private string GetErrorFileName(int i)
         {
-            string dir = Path.GetDirectoryName(cSaveFileName);
-            string fileName = Path.GetFileNameWithoutExtension(cSaveFileName);
-            string ext = Path.GetExtension(cSaveFileName);
+            string dir = Path.GetDirectoryName(SaveFileName);
+            string fileName = Path.GetFileNameWithoutExtension(SaveFileName);
+            string ext = Path.GetExtension(SaveFileName);
 
             return Path.Combine(dir, $"{fileName}_error{i}{ext}");
         }
