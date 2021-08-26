@@ -1,4 +1,4 @@
-﻿<Window x:Class="loppis.MainWindow"
+﻿<Window x:Class="loppis.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
@@ -75,9 +75,13 @@
                     </Behaviors:Interaction.Triggers>
                 </Button>
             </StackPanel>
+            <StackPanel Grid.Row="2" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="100,0,100,0">
+                <Button Background="#FF222020" Width="150" Height="50" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="Säljare" Focusable="False" BorderThickness="0" Click="Button_Click">
+                </Button>
+            </StackPanel>
         </Grid>
         <Grid Grid.Column ="1">
-            <Grid.RowDefinitions >
+            <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
