@@ -1,5 +1,5 @@
-﻿using System.Windows;
-
+﻿using loppis.ViewModels;
+using System.Windows;
 namespace loppis
 {
     /// <summary>
@@ -12,9 +12,9 @@ namespace loppis
             InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private void Window_Initialized(object sender, System.EventArgs e)
         {
-            DataContext = new loppis.ViewModels.SalesViewModel();
+            DataContext = new SalesViewModel();
         }
     }
 }

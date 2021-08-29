@@ -1,20 +1,26 @@
 ﻿using loppis.Model;
 using Prism.Commands;
 using Prism.Mvvm;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
 
 namespace loppis.ViewModels
 {
+    public delegate void ShutDownDelegate();
+    public delegate MessageBoxResult ShowMessageBoxDelegate(string message, string caption);
+
     public class SalesViewModel : BindableBase
     {
         #region Constants
 
         private const string cDefaultSaveFileName = @".\transactions.xml";
+        private const string cSellerFileName = @".\sellers.csv";
 
         #endregion
 
@@ -34,7 +40,8 @@ namespace loppis.ViewModels
         public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
         public ObservableCollection<SaleEntry> ItemList { get => itemList; set => SetProperty(ref itemList, value); }
         public bool IdSelected { get => m_idSelected; set => SetProperty(ref m_idSelected, value); }
-
+        public ShutDownDelegate ShutDownFunction { get; set; }
+        public ShowMessageBoxDelegate MsgBoxFunction { get; set; }
         #endregion
 
         #region Construction
@@ -51,6 +58,10 @@ namespace loppis.ViewModels
             BagCommand = new DelegateCommand(ExecuteBag, CanExecuteBag);
             CardCommand = new DelegateCommand(ExecuteCard, CanExecuteCard);
             SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
+            LoadCommand = new DelegateCommand(ExecuteLoad, CanExecuteLoad);
+            SellerList = new Dictionary<int, string>();
+            ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
+            MsgBoxFunction = MessageBox.Show;
             SellerIdFocused = true;
         }
 
@@ -64,6 +75,8 @@ namespace loppis.ViewModels
         public ICommand RoundUpCommand { get; set; }
         public ICommand MoveFocusCommand { get; set; }
         public ICommand EnterSaleCommand { get; set; }
+        public ICommand LoadCommand { get; set; }
+        public Dictionary<int, string> SellerList { get; set; }
 
 
         #region SaveToFile Command
@@ -203,7 +216,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteMove()
         {
-            return CurrentEntry.SellerId != null && CurrentEntry.SellerId > 0;
+            return CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
         }
 
         private void ExecuteMove()
@@ -219,7 +232,7 @@ namespace loppis.ViewModels
         private bool CanExecuteEntry()
         {
 
-            return CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null && CurrentEntry.SellerId > 0;
+            return CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
         }
 
         private void ExecuteEntry()
@@ -235,6 +248,46 @@ namespace loppis.ViewModels
             CurrentEntry.Clear();
             SellerIdFocused = true;
             PriceFocused = false;
+        }
+
+
+        #endregion
+
+        #region LoadCommand
+
+        private bool CanExecuteLoad()
+        {
+            return true;
+        }
+
+        private void ExecuteLoad()
+        {
+            try
+            {
+                SellerList.Clear();
+                string sellersContent = File.ReadAllText(cSellerFileName);
+                foreach (string line in sellersContent.Split("\r\n"))
+                {
+                    string[] a = line.Split(";");
+                    SellerList.Add(int.Parse(a[0]), a[1]);
+                }
+
+            }
+            catch (FileNotFoundException ex)
+            {
+                MsgBoxFunction(ex.Message, "Error!");
+                ShutDownFunction();
+            }
+            catch (System.FormatException ex)
+            {
+                MsgBoxFunction(ex.Message, "Error!");
+                ShutDownFunction();
+            }
+            catch (System.ArgumentException ex)
+            {
+                MsgBoxFunction(ex.Message, "Error!");
+                ShutDownFunction();
+            }
         }
 
 

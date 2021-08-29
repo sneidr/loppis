@@ -11,8 +11,28 @@ namespace LoppisTest
     public class LoppisTest
     {
         private const string testFileName = @".\mytestfile.xml";
+        private const string sellerFileName = @".\sellers.csv";
 
         #region EnterSale Tests
+        [TestMethod]
+        public void TestCanEnterSale_SellerIdInvalid()
+        {
+            if (File.Exists(sellerFileName))
+            {
+                File.Delete(sellerFileName);
+            }
+            File.Create(sellerFileName).Close();
+            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+
+            SalesViewModel vm = new SalesViewModel();
+            Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+            vm.LoadCommand.Execute(null);
+
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
+            Assert.IsFalse(vm.EnterSaleCommand.CanExecute(null));
+        }
+
         [TestMethod]
         public void TestEnterOneSale_SumIsEqualToPrice()
         {
@@ -74,6 +94,29 @@ namespace LoppisTest
             Assert.IsNull(vm.CurrentEntry.Price);
             Assert.IsNull(vm.CurrentEntry.SellerId);
         }
+        #endregion
+
+        #region Move Command Tests
+
+        [TestMethod]
+        public void TestMove_InvalidSellerId()
+        {
+            if (File.Exists(sellerFileName))
+            {
+                File.Delete(sellerFileName);
+            }
+            File.Create(sellerFileName).Close();
+            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+
+            SalesViewModel vm = new SalesViewModel();
+            Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+            vm.LoadCommand.Execute(null);
+
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 12;
+            Assert.IsFalse(vm.MoveFocusCommand.CanExecute(null));
+        }
+
         #endregion
 
         #region Bag Command Tests
@@ -223,7 +266,7 @@ namespace LoppisTest
 
         #endregion
 
-        #region SaveToFileCommand
+        #region SaveToFileCommand Tests
         [TestMethod]
         public void TestSaveToFile_CanExecute()
         {
@@ -407,5 +450,121 @@ namespace LoppisTest
         }
         #endregion
 
+        #region LoadCommand Tests
+
+        [TestMethod]
+        public void TestLoadCommand()
+        {
+            if (File.Exists(sellerFileName))
+            {
+                File.Delete(sellerFileName);
+            }
+            {
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                SalesViewModel vm = new SalesViewModel(testFileName);
+
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.AreEqual(0, vm.SellerList.Count);
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            {
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.AreEqual(3, vm.SellerList.Count);
+                Assert.AreEqual("Hej Svej", vm.SellerList[7]);
+            }
+            { // Error: Empty file
+                File.Delete(sellerFileName);
+                File.Create(sellerFileName).Close();
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: Cannot convert to int
+                File.Delete(sellerFileName);
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "A;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: Duplicate ids
+                File.Delete(sellerFileName);
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n1;John Doe\r\n7;Hej Svej");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: Missing semicolon
+                File.Delete(sellerFileName);
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1 Firstname LastName\r\n1;John Doe\r\n7;Hej Svej");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: Missing line breaks
+                File.Delete(sellerFileName);
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1 Firstname LastName 1;John Doe 7;Hej Svej");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+        }
+
+        #endregion
     }
 }
