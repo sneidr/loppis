@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
 
@@ -32,6 +33,7 @@ namespace loppis.ViewModels
         private bool m_idSelected;
         private bool sellerIdFocused;
         private bool priceFocused;
+        private Brush sellerIdBackground;
 
         public bool SellerIdFocused { get => sellerIdFocused; set => SetProperty(ref sellerIdFocused, value); }
         public bool PriceFocused { get => priceFocused; set => SetProperty(ref priceFocused, value); }
@@ -42,6 +44,8 @@ namespace loppis.ViewModels
         public bool IdSelected { get => m_idSelected; set => SetProperty(ref m_idSelected, value); }
         public ShutDownDelegate ShutDownFunction { get; set; }
         public ShowMessageBoxDelegate MsgBoxFunction { get; set; }
+        public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
+
         #endregion
 
         #region Construction
@@ -62,6 +66,7 @@ namespace loppis.ViewModels
             SellerList = new Dictionary<int, string>();
             ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
             MsgBoxFunction = MessageBox.Show;
+            SellerIdBackground = new SolidColorBrush(Colors.White);
             SellerIdFocused = true;
         }
 
@@ -77,7 +82,6 @@ namespace loppis.ViewModels
         public ICommand EnterSaleCommand { get; set; }
         public ICommand LoadCommand { get; set; }
         public Dictionary<int, string> SellerList { get; set; }
-
 
         #region SaveToFile Command
 
@@ -216,7 +220,16 @@ namespace loppis.ViewModels
 
         private bool CanExecuteMove()
         {
-            return CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
+            bool canExecute = CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
+            if (!canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.White)
+            {
+                ((SolidColorBrush)SellerIdBackground).Color = Colors.Orange;
+            }
+            else if (canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.Orange)
+            {
+                ((SolidColorBrush)SellerIdBackground).Color = Colors.White;
+            }
+            return canExecute;
         }
 
         private void ExecuteMove()
@@ -232,7 +245,17 @@ namespace loppis.ViewModels
         private bool CanExecuteEntry()
         {
 
-            return CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
+            bool canExecute = CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
+            if (!canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.White)
+            {
+                ((SolidColorBrush)SellerIdBackground).Color = Colors.Orange;
+            }
+            else if (canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.Orange)
+            {
+                ((SolidColorBrush)SellerIdBackground).Color = Colors.White;
+            }
+
+            return canExecute;
         }
 
         private void ExecuteEntry()

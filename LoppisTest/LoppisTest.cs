@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.IO;
+using System.Windows.Media;
 using System.Xml.Serialization;
 using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
 
@@ -25,12 +26,17 @@ namespace LoppisTest
             File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
 
             SalesViewModel vm = new SalesViewModel();
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
             vm.LoadCommand.Execute(null);
 
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             Assert.IsFalse(vm.EnterSaleCommand.CanExecute(null));
+            Assert.AreEqual(Colors.Orange, ((SolidColorBrush)vm.SellerIdBackground).Color);
+            vm.CurrentEntry.SellerId = 7;
+            Assert.IsTrue(vm.EnterSaleCommand.CanExecute(null));
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
         }
 
         [TestMethod]
@@ -109,12 +115,19 @@ namespace LoppisTest
             File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
 
             SalesViewModel vm = new SalesViewModel();
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
+
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
             vm.LoadCommand.Execute(null);
 
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             Assert.IsFalse(vm.MoveFocusCommand.CanExecute(null));
+            Assert.AreEqual(Colors.Orange, ((SolidColorBrush)vm.SellerIdBackground).Color);
+
+            vm.CurrentEntry.SellerId = 7;
+            Assert.IsTrue(vm.MoveFocusCommand.CanExecute(null));
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
         }
 
         #endregion
