@@ -579,5 +579,23 @@ namespace LoppisTest
         }
 
         #endregion
+
+        #region UndoCommand Tests
+
+        [TestMethod]
+        public void TestUndoCommand()
+        {
+            SalesViewModel vm = new();
+            vm.CurrentEntry.SellerId = 1;
+            vm.CurrentEntry.Price = 3;
+
+            Assert.IsFalse(vm.UndoCommand.CanExecute(new object()));
+            Assert.IsTrue(vm.EnterSaleCommand.CanExecute(null));
+            vm.EnterSaleCommand.Execute(null);
+
+
+        }
+
+        #endregion
     }
 }

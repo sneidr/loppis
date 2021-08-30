@@ -87,8 +87,7 @@
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
 
-            <ListBox x:Name="items" Grid.Row="0" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding ItemList}" ItemTemplate="{StaticResource EntryItemTemplate}" HorizontalContentAlignment="Stretch">
-
+            <ListBox x:Name="items" Grid.Row="0" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding ItemList}" ItemTemplate="{StaticResource EntryItemTemplate}" HorizontalContentAlignment="Stretch" PreviewMouseDoubleClick="items_PreviewMouseDoubleClick" MouseLeftButtonUp="items_MouseLeftButtonUp">
             </ListBox>
 
             <Grid Grid.Row ="1">
