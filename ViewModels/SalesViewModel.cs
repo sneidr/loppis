@@ -35,8 +35,27 @@ namespace loppis.ViewModels
         private bool priceFocused;
         private Brush sellerIdBackground;
 
-        public bool SellerIdFocused { get => sellerIdFocused; set => SetProperty(ref sellerIdFocused, value); }
-        public bool PriceFocused { get => priceFocused; set => SetProperty(ref priceFocused, value); }
+        public bool SellerIdFocused
+        {
+            get => sellerIdFocused;
+
+            set
+            {
+                SetProperty(ref sellerIdFocused, !value);
+                SetProperty(ref sellerIdFocused, value);
+            }
+        }
+
+        public bool PriceFocused
+        {
+            get => priceFocused;
+            set
+            {
+                // Toggle focus to make sure that it is set
+                SetProperty(ref priceFocused, !value);
+                SetProperty(ref priceFocused, value);
+            }
+        }
         public string SaveFileName { get; set; }
         public SaleEntry CurrentEntry { get => currentEntry; set => SetProperty(ref currentEntry, value); }
         public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
@@ -270,13 +289,22 @@ namespace loppis.ViewModels
         public void EnterSale()
         {
             ItemList.Insert(0, new SaleEntry(CurrentEntry.SellerId, CurrentEntry.Price));
-            var total = ItemList.Sum(i => i.Price);
-            SumTotal = total != null ? (int)total : 0;
+            UpdateSumTotal();
             CurrentEntry.Clear();
-            SellerIdFocused = true;
-            PriceFocused = false;
+            SetFocusToSellerId();
         }
 
+        private void UpdateSumTotal()
+        {
+            var total = ItemList.Sum(i => i.Price);
+            SumTotal = total != null ? (int)total : 0;
+        }
+
+        private void SetFocusToSellerId()
+        {
+            PriceFocused = false;
+            SellerIdFocused = true;
+        }
 
         #endregion
 
@@ -331,6 +359,8 @@ namespace loppis.ViewModels
         {
             CurrentEntry = itemList[(int)param];
             ItemList.RemoveAt((int)param);
+            UpdateSumTotal();
+            SetFocusToSellerId();
         }
 
         #endregion
@@ -346,6 +376,7 @@ namespace loppis.ViewModels
         {
             CurrentEntry.SellerId = null;
             CurrentEntry.Price = null;
+            SetFocusToSellerId();
         }
 
         #endregion

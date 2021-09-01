@@ -12,12 +12,12 @@
     </Behaviors:Interaction.Triggers>
     <Window.Resources>
         <DataTemplate x:Key="EntryItemTemplate">
-            <DockPanel HorizontalAlignment="Right">
-                <TextBlock Text="Säljare: " FontSize="24"></TextBlock>
-                <TextBlock x:Name="Id" Text="{Binding SellerId}" FontSize="24"/>
-                <TextBlock x:Name="Spaces" Text="   " FontSize="24"/>
-                <TextBlock Text="Pris: " FontSize="24"></TextBlock>
-                <TextBlock x:Name="Price" Text="{Binding Price}" FontSize="24"/>
+            <DockPanel HorizontalAlignment="Right" Focusable="False">
+                <TextBlock Text="Säljare: " FontSize="24" Focusable="False"></TextBlock>
+                <TextBlock x:Name="Id" Text="{Binding SellerId}" FontSize="24" Focusable="False"/>
+                <TextBlock x:Name="Spaces" Text="   " FontSize="24" Focusable="False"/>
+                <TextBlock Text="Pris: " FontSize="24" Focusable="False"></TextBlock>
+                <TextBlock x:Name="Price" Text="{Binding Price}" FontSize="24" Focusable="False"/>
             </DockPanel>
         </DataTemplate>
     </Window.Resources>
@@ -94,7 +94,7 @@
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
 
-            <ListBox x:Name="items" Grid.Row="0" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding ItemList}" ItemTemplate="{StaticResource EntryItemTemplate}" HorizontalContentAlignment="Stretch" PreviewMouseDoubleClick="items_PreviewMouseDoubleClick" MouseLeftButtonUp="items_MouseLeftButtonUp">
+            <ListBox x:Name="items" Grid.Row="0" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding ItemList}" ItemTemplate="{StaticResource EntryItemTemplate}" HorizontalContentAlignment="Stretch" PreviewMouseDoubleClick="items_PreviewMouseDoubleClick" MouseLeftButtonUp="items_MouseLeftButtonUp" Focusable="False">
             </ListBox>
 
             <Grid Grid.Row ="1">
