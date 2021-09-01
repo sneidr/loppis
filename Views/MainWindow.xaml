@@ -72,10 +72,17 @@
                         </Behaviors:EventTrigger>
                     </Behaviors:Interaction.Triggers>
                 </Button>
-                <Button Background="Red" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="_Avrunda" Focusable="False">
+                <Button Background="Green" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="_Avrunda" Focusable="False">
                     <Behaviors:Interaction.Triggers>
                         <Behaviors:EventTrigger EventName="Click">
                             <Behaviors:InvokeCommandAction Command="{Binding RoundUpCommand}"/>
+                        </Behaviors:EventTrigger>
+                    </Behaviors:Interaction.Triggers>
+                </Button>
+                <Button Background="Red" Width="150" Height="150" FontSize="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Foreground="WhiteSmoke" Content="_Rensa" Focusable="False">
+                    <Behaviors:Interaction.Triggers>
+                        <Behaviors:EventTrigger EventName="Click">
+                            <Behaviors:InvokeCommandAction Command="{Binding ClearCommand}"/>
                         </Behaviors:EventTrigger>
                     </Behaviors:Interaction.Triggers>
                 </Button>

@@ -64,12 +64,14 @@ namespace loppis.ViewModels
             SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
             LoadCommand = new DelegateCommand(ExecuteLoad, CanExecuteLoad);
             UndoCommand = new DelegateCommand<object>(ExecuteUndo, CanExecuteUndo);
+            ClearCommand = new DelegateCommand(ExecuteClear, CanExecuteClear);
             SellerList = new Dictionary<int, string>();
             ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
             MsgBoxFunction = MessageBox.Show;
             SellerIdBackground = new SolidColorBrush(Colors.White);
             SellerIdFocused = true;
         }
+
         #endregion
 
         #region Commands
@@ -82,6 +84,7 @@ namespace loppis.ViewModels
         public ICommand EnterSaleCommand { get; set; }
         public ICommand LoadCommand { get; set; }
         public ICommand UndoCommand { get; set; }
+        public ICommand ClearCommand { get; set; }
         public Dictionary<int, string> SellerList { get; set; }
 
         #region SaveToFile Command
@@ -328,6 +331,21 @@ namespace loppis.ViewModels
         {
             CurrentEntry = itemList[(int)param];
             ItemList.RemoveAt((int)param);
+        }
+
+        #endregion
+
+        #region ClearCommand
+
+        private bool CanExecuteClear()
+        {
+            return CurrentEntry.SellerId != null || CurrentEntry.Price != null;
+        }
+
+        private void ExecuteClear()
+        {
+            CurrentEntry.SellerId = null;
+            CurrentEntry.Price = null;
         }
 
         #endregion
