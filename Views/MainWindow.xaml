@@ -4,7 +4,7 @@
         xmlns:Behaviors="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:loppis.Views"
-        Title="MainWindow" WindowStartupLocation="CenterScreen" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Background="#FF222020" Initialized="Window_Initialized">
+        Title="LoppisAppen" WindowStartupLocation="CenterScreen" WindowState="Maximized" WindowStyle="ThreeDBorderWindow" Background="#FF222020" Initialized="Window_Initialized" Icon="/Views/loppa.png">
     <Behaviors:Interaction.Triggers>
         <Behaviors:EventTrigger EventName="Loaded">
             <Behaviors:InvokeCommandAction Command="{Binding LoadCommand}"/>
@@ -23,11 +23,12 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="83*"/>
+            <ColumnDefinition Width="817*"/>
             <ColumnDefinition Width="500"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column ="0">
+        <Grid Grid.Column ="0" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="2*"/>
@@ -90,7 +91,7 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <Grid Grid.Column ="1">
+        <Grid Grid.Column ="2">
             <Grid.RowDefinitions >
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="200"/>

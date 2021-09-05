@@ -91,6 +91,7 @@ namespace loppis.ViewModels
             MsgBoxFunction = MessageBox.Show;
             SellerIdBackground = new SolidColorBrush(Colors.White);
             SellerIdFocused = true;
+            Cashier = "Säljare";
         }
 
         #endregion
