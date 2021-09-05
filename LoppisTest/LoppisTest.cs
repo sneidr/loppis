@@ -23,7 +23,7 @@ namespace LoppisTest
                 File.Delete(sellerFileName);
             }
             File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
             SalesViewModel vm = new SalesViewModel();
             Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
@@ -112,7 +112,7 @@ namespace LoppisTest
                 File.Delete(sellerFileName);
             }
             File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
             SalesViewModel vm = new SalesViewModel();
             Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
@@ -153,12 +153,16 @@ namespace LoppisTest
         [TestMethod]
         public void TestBagCommand_Execute()
         {
-            SalesViewModel vm = new SalesViewModel();
-            vm.BagCommand.Execute(null);
-            Assert.AreEqual(vm.CurrentEntry.SellerId, 100);
-            Assert.AreEqual(vm.CurrentEntry.Price, 5);
-            Assert.IsFalse(vm.SellerIdFocused);
-            Assert.IsTrue(vm.PriceFocused);
+            {
+                SalesViewModel vm = new SalesViewModel();
+                vm.SellerList.Add(92, new Seller() { Name = "Kasse", DefaultPrice = 7 });
+                vm.BagCommand.Execute(null);
+
+                Assert.AreEqual(vm.CurrentEntry.SellerId, 92);
+                Assert.AreEqual(vm.CurrentEntry.Price, 7);
+                Assert.IsFalse(vm.SellerIdFocused);
+                Assert.IsTrue(vm.PriceFocused);
+            }
         }
 
         #endregion
@@ -185,9 +189,10 @@ namespace LoppisTest
         public void TestCardCommand_Execute()
         {
             SalesViewModel vm = new SalesViewModel();
+            vm.SellerList.Add(200, new Seller() { Name = "Vykort", DefaultPrice = 27 });
             vm.CardCommand.Execute(null);
-            Assert.AreEqual(vm.CurrentEntry.SellerId, 150);
-            Assert.AreEqual(vm.CurrentEntry.Price, 15);
+            Assert.AreEqual(vm.CurrentEntry.SellerId, 200);
+            Assert.AreEqual(vm.CurrentEntry.Price, 27);
             Assert.IsFalse(vm.SellerIdFocused);
             Assert.IsTrue(vm.PriceFocused);
         }
@@ -488,14 +493,14 @@ namespace LoppisTest
             }
             {
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;78\r\n8;Vykort;15");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 Assert.IsTrue(vm.LoadCommand.CanExecute(null));
                 vm.LoadCommand.Execute(null);
 
-                Assert.AreEqual(3, vm.SellerList.Count);
-                Assert.AreEqual("Hej Svej", vm.SellerList[7].Name);
+                Assert.AreEqual(4, vm.SellerList.Count);
+                Assert.AreEqual("John Doe", vm.SellerList[2].Name);
             }
             { // Error: Empty file
                 File.Delete(sellerFileName);
@@ -515,7 +520,7 @@ namespace LoppisTest
             { // Error: Cannot convert to int
                 File.Delete(sellerFileName);
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "A;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej");
+                File.WriteAllText(sellerFileName, "A;Firstname LastName\r\n2;John Doe\r\n7;Kasse");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 bool isShutDown = false;
@@ -531,7 +536,7 @@ namespace LoppisTest
             { // Error: Duplicate ids
                 File.Delete(sellerFileName);
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n1;John Doe\r\n7;Hej Svej");
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 bool isShutDown = false;
@@ -547,7 +552,7 @@ namespace LoppisTest
             { // Error: Missing semicolon
                 File.Delete(sellerFileName);
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1 Firstname LastName\r\n1;John Doe\r\n7;Hej Svej");
+                File.WriteAllText(sellerFileName, "1 Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 bool isShutDown = false;
@@ -563,7 +568,7 @@ namespace LoppisTest
             { // Error: Missing line breaks
                 File.Delete(sellerFileName);
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1 Firstname LastName 1;John Doe 7;Hej Svej");
+                File.WriteAllText(sellerFileName, "1 Firstname LastName 1;John Doe 7;Kasse");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 bool isShutDown = false;
@@ -578,7 +583,7 @@ namespace LoppisTest
             }
             { // Default price
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Kort;15\r\n11;Kasse;5");
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;5");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 Assert.IsTrue(vm.LoadCommand.CanExecute(null));
@@ -590,13 +595,73 @@ namespace LoppisTest
             }
             { // Error: Default price not int
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Kort;15\r\n11;Kasse;Hej");
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;Hej");
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
                 vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
 
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: No bag entry in file
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Vykort;15");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: No default price for bag entry
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort;15");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: No card entry in file
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;15");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: No default price for card entry
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
                 Assert.IsTrue(vm.LoadCommand.CanExecute(null));
                 vm.LoadCommand.Execute(null);
 

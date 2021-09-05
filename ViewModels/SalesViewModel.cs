@@ -199,8 +199,19 @@ namespace loppis.ViewModels
 
         private void ExecuteCard()
         {
-            CurrentEntry.SellerId = 150;
+            // Default values
+            CurrentEntry.SellerId = 600;
             CurrentEntry.Price = 15;
+
+            foreach (var seller in SellerList)
+            {
+                if (seller.Value.Name == "Vykort")
+                {
+                    CurrentEntry.SellerId = seller.Key;
+                    CurrentEntry.Price = seller.Value.DefaultPrice;
+                }
+            }
+
             ExecuteMove();
         }
 
@@ -215,8 +226,18 @@ namespace loppis.ViewModels
 
         private void ExecuteBag()
         {
-            CurrentEntry.SellerId = 100;
+            // Default values
+            CurrentEntry.SellerId = 500;
             CurrentEntry.Price = 5;
+
+            foreach (var seller in SellerList)
+            {
+                if (seller.Value.Name == "Kasse")
+                {
+                    CurrentEntry.SellerId = seller.Key;
+                    CurrentEntry.Price = seller.Value.DefaultPrice;
+                }
+            }
             ExecuteMove();
         }
 
@@ -319,25 +340,46 @@ namespace loppis.ViewModels
         {
             try
             {
+                bool bagEntryInFile = false;
+                bool cardEntryInFile = false;
                 SellerList.Clear();
                 string sellersContent = File.ReadAllText(cSellerFileName);
                 foreach (string line in sellersContent.Split("\r\n"))
                 {
                     string[] a = line.Split(";");
+                    Seller seller;
                     if (a.Length > 2)
                     {
-                        SellerList.Add(int.Parse(a[0]), new Seller() { Name = a[1], DefaultPrice = int.Parse(a[2]) });
+                        seller = new Seller() { Name = a[1], DefaultPrice = int.Parse(a[2]) };
+                        SellerList.Add(int.Parse(a[0]), seller);
                     }
                     else if (a.Length > 1)
                     {
-                        SellerList.Add(int.Parse(a[0]), new Seller() { Name = a[1], DefaultPrice = null });
+                        seller = new Seller() { Name = a[1], DefaultPrice = null };
+                        SellerList.Add(int.Parse(a[0]), seller);
                     }
                     else
                     {
                         throw new System.FormatException($"The line was incorrectly formatted: {line}");
                     }
-                }
 
+                    if (seller.Name == "Kasse" && seller.DefaultPrice != null)
+                    {
+                        bagEntryInFile = true;
+                    }
+                    if (seller.Name == "Vykort" && seller.DefaultPrice != null)
+                    {
+                        cardEntryInFile = true;
+                    }
+                }
+                if (!bagEntryInFile)
+                {
+                    throw new System.FormatException("File must contain entry for \"Kasse\" with default price.");
+                }
+                if (!cardEntryInFile)
+                {
+                    throw new System.FormatException("File must contain entry for \"Vykort\" with default price.");
+                }
             }
             catch (FileNotFoundException ex)
             {
