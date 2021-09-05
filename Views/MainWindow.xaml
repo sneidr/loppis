@@ -29,11 +29,13 @@
 
         <Grid Grid.Column ="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="2*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" VerticalAlignment="Top" Orientation="Horizontal" Margin="100">
+            <TextBox Grid.Row="0" HorizontalAlignment="Left" FontSize="36" Text="{Binding Cashier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Grid.Row="1" VerticalAlignment="Top" Orientation="Horizontal" Margin="100">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type TextBox}">
                         <Setter Property="Margin" Value="50,0,0,0"/>
@@ -52,7 +54,7 @@
                     </TextBox.InputBindings>
                 </TextBox>
             </StackPanel>
-            <StackPanel Grid.Row="1" VerticalAlignment="Center" Orientation="Horizontal" Margin="100,0,100,0">
+            <StackPanel Grid.Row="2" VerticalAlignment="Center" Orientation="Horizontal" Margin="100,0,100,0">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Margin" Value="10,0,10,0"/>

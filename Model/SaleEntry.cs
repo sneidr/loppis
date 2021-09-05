@@ -25,25 +25,8 @@ namespace loppis.Model
         private int? m_sellerId;
         private int? m_price;
 
-        public int? SellerId
-        {
-            get => m_sellerId;
-
-            set
-            {
-                SetProperty(ref m_sellerId, value);
-            }
-        }
-
-        public int? Price
-        {
-            get => m_price;
-
-            set
-            {
-                SetProperty(ref m_price, value);
-            }
-        }
+        public int? SellerId { get => m_sellerId; set { SetProperty(ref m_sellerId, value); } }
+        public int? Price { get => m_price; set { SetProperty(ref m_price, value); } }
 
         public bool Equals(SaleEntry other)
         {

@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
+using SaveList = System.Collections.Generic.List<loppis.Model.Sale<loppis.Model.SaleEntry>>;
 
 namespace loppis.ViewModels
 {
@@ -34,6 +34,7 @@ namespace loppis.ViewModels
         private bool sellerIdFocused;
         private bool priceFocused;
         private Brush sellerIdBackground;
+        private string cashier;
 
         public bool SellerIdFocused
         {
@@ -41,6 +42,7 @@ namespace loppis.ViewModels
 
             set
             {
+                // Toggle focus to make sure that it is set
                 SetProperty(ref sellerIdFocused, !value);
                 SetProperty(ref sellerIdFocused, value);
             }
@@ -64,7 +66,7 @@ namespace loppis.ViewModels
         public ShutDownDelegate ShutDownFunction { get; set; }
         public ShowMessageBoxDelegate MsgBoxFunction { get; set; }
         public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
-
+        public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
         #endregion
 
         #region Construction
@@ -117,7 +119,7 @@ namespace loppis.ViewModels
         private void ExecuteSaveToFile()
         {
             SaveList entries = ReadFromXmlFile();
-            entries.Add(ItemList);
+            entries.Add(new Sale<SaleEntry>(ItemList, Cashier));
             WriteToXmlFile(entries);
             ItemList.Clear();
             SumTotal = 0;

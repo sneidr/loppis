@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<System.Collections.ObjectModel.ObservableCollection<loppis.Model.SaleEntry>>;
+using SaveList = System.Collections.Generic.List<loppis.Model.Sale<loppis.Model.SaleEntry>>;
 
 namespace LoppisTest
 {
@@ -306,6 +306,8 @@ namespace LoppisTest
             }
 
             SalesViewModel vm = new SalesViewModel(testFileName);
+            vm.Cashier = "Lisa";
+
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
@@ -334,6 +336,9 @@ namespace LoppisTest
             Assert.AreEqual(entries[0][1].Price, 80);
             Assert.AreEqual(entries[1][0].SellerId, 20);
             Assert.AreEqual(entries[1][0].Price, 100);
+            Assert.AreEqual(entries[0].Cashier, "Lisa");
+            Assert.AreEqual(entries[1].Cashier, "Lisa");
+            Assert.AreNotEqual(entries[0].Timestamp, entries[1].Timestamp);
             Assert.AreEqual(vm.SumTotal, 0);
         }
 
