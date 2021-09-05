@@ -495,7 +495,7 @@ namespace LoppisTest
                 vm.LoadCommand.Execute(null);
 
                 Assert.AreEqual(3, vm.SellerList.Count);
-                Assert.AreEqual("Hej Svej", vm.SellerList[7]);
+                Assert.AreEqual("Hej Svej", vm.SellerList[7].Name);
             }
             { // Error: Empty file
                 File.Delete(sellerFileName);
@@ -576,6 +576,33 @@ namespace LoppisTest
                 Assert.IsTrue(isShutDown);
                 Assert.IsTrue(wasMessageBoxShown);
             }
+            { // Default price
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Kort;15\r\n11;Kasse;5");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.AreEqual(3, vm.SellerList.Count);
+                Assert.AreEqual(15, vm.SellerList[8].DefaultPrice);
+                Assert.AreEqual(5, vm.SellerList[11].DefaultPrice);
+            }
+            { // Error: Default price not int
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Kort;15\r\n11;Kasse;Hej");
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
         }
 
         #endregion
@@ -590,7 +617,7 @@ namespace LoppisTest
             vm.CurrentEntry.Price = 3;
 
             Assert.IsFalse(vm.UndoCommand.CanExecute(0));
-            vm.SellerList.Add(1, "Kim Karlsson");
+            vm.SellerList.Add(1, new Seller() { Name = "Kim Karlsson", DefaultPrice = null });
             Assert.IsTrue(vm.EnterSaleCommand.CanExecute(null));
             vm.EnterSaleCommand.Execute(null);
 

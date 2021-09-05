@@ -84,7 +84,7 @@ namespace loppis.ViewModels
             LoadCommand = new DelegateCommand(ExecuteLoad, CanExecuteLoad);
             UndoCommand = new DelegateCommand<object>(ExecuteUndo, CanExecuteUndo);
             ClearCommand = new DelegateCommand(ExecuteClear, CanExecuteClear);
-            SellerList = new Dictionary<int, string>();
+            SellerList = new Dictionary<int, Seller>();
             ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
             MsgBoxFunction = MessageBox.Show;
             SellerIdBackground = new SolidColorBrush(Colors.White);
@@ -104,7 +104,7 @@ namespace loppis.ViewModels
         public ICommand LoadCommand { get; set; }
         public ICommand UndoCommand { get; set; }
         public ICommand ClearCommand { get; set; }
-        public Dictionary<int, string> SellerList { get; set; }
+        public Dictionary<int, Seller> SellerList { get; set; }
 
         #region SaveToFile Command
 
@@ -324,7 +324,18 @@ namespace loppis.ViewModels
                 foreach (string line in sellersContent.Split("\r\n"))
                 {
                     string[] a = line.Split(";");
-                    SellerList.Add(int.Parse(a[0]), a[1]);
+                    if (a.Length > 2)
+                    {
+                        SellerList.Add(int.Parse(a[0]), new Seller() { Name = a[1], DefaultPrice = int.Parse(a[2]) });
+                    }
+                    else if (a.Length > 1)
+                    {
+                        SellerList.Add(int.Parse(a[0]), new Seller() { Name = a[1], DefaultPrice = null });
+                    }
+                    else
+                    {
+                        throw new System.FormatException($"The line was incorrectly formatted: {line}");
+                    }
                 }
 
             }
