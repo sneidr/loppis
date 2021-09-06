@@ -42,6 +42,10 @@ namespace loppis.Model
                 {
                     return "Kasse       ";
                 }
+                else if (m_sellerId == loppis.ViewModels.SalesViewModel.RoundUpId)
+                {
+                    return "Avrundning  ";
+                }
                 else
                 {
                     return $"Säljare: {m_sellerId.ToString(),3}";

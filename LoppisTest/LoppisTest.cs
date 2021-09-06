@@ -70,7 +70,7 @@ namespace LoppisTest
             vm.EnterSale();
 
             Assert.AreEqual(vm.ItemList[0].SellerId, 12);
-            Assert.AreEqual(vm.ItemList[0].SellerIdListText, "Säljare 12");
+            Assert.AreEqual(vm.ItemList[0].SellerIdListText, "Säljare:  12");
             Assert.AreEqual(vm.ItemList[0].Price, 62);
         }
 
@@ -101,6 +101,15 @@ namespace LoppisTest
             Assert.IsNull(vm.CurrentEntry.Price);
             Assert.IsNull(vm.CurrentEntry.SellerId);
         }
+
+        [TestMethod]
+        public void TestEnterOneSale_RoundUpSellerIdIsOk()
+        {
+            SalesViewModel vm = new SalesViewModel();
+            vm.CurrentEntry.Price = 62;
+            vm.CurrentEntry.SellerId = 999;
+            Assert.IsTrue(vm.EnterSaleCommand.CanExecute(null));
+        }
         #endregion
 
         #region Move Command Tests
@@ -129,6 +138,9 @@ namespace LoppisTest
             vm.CurrentEntry.SellerId = 7;
             Assert.IsTrue(vm.MoveFocusCommand.CanExecute(null));
             Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
+
+            vm.CurrentEntry.SellerId = 999;
+            Assert.IsTrue(vm.MoveFocusCommand.CanExecute(null));
         }
 
         #endregion
@@ -260,7 +272,7 @@ namespace LoppisTest
 
             Assert.AreEqual(vm.SumTotal, 43);
             Assert.AreEqual(vm.CurrentEntry.Price, 50 - 43);
-            Assert.AreEqual(vm.CurrentEntry.SellerId, 200);
+            Assert.AreEqual(vm.CurrentEntry.SellerId, 999);
             Assert.IsFalse(vm.SellerIdFocused);
             Assert.IsTrue(vm.PriceFocused);
         }
@@ -661,7 +673,22 @@ namespace LoppisTest
             }
             { // Error: No default price for card entry
                 File.Create(sellerFileName).Close();
-                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort");
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;23\r\n8;Vykort");
+
+                SalesViewModel vm = new SalesViewModel(testFileName);
+                bool isShutDown = false;
+                bool wasMessageBoxShown = false;
+                vm.ShutDownFunction = () => { isShutDown = true; };
+                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                Assert.IsTrue(vm.LoadCommand.CanExecute(null));
+                vm.LoadCommand.Execute(null);
+
+                Assert.IsTrue(isShutDown);
+                Assert.IsTrue(wasMessageBoxShown);
+            }
+            { // Error: 999 is reserved for roundup
+                File.Create(sellerFileName).Close();
+                File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;55\r\n8;Vykort;23\r\n999;Ajajaj");
 
                 SalesViewModel vm = new SalesViewModel(testFileName);
                 bool isShutDown = false;

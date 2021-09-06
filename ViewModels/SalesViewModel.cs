@@ -68,6 +68,7 @@ namespace loppis.ViewModels
         public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
         public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
 
+        public const int RoundUpId = 999;
         public static int? CardId { get; set; }
         public static int? BagId { get; set; }
         #endregion
@@ -261,7 +262,7 @@ namespace loppis.ViewModels
         private void ExecuteRoundUp()
         {
             var rest = SumTotal % 50;
-            CurrentEntry.SellerId = 200;
+            CurrentEntry.SellerId = 999;
             CurrentEntry.Price = (50 - rest);
             ExecuteMove();
         }
@@ -272,7 +273,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteMove()
         {
-            bool canExecute = CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
+            bool canExecute = CurrentEntry.SellerId != null && (SellerList.ContainsKey(CurrentEntry.SellerId.Value) || CurrentEntry.SellerId.Value == RoundUpId);
             if (!canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.White)
             {
                 ((SolidColorBrush)SellerIdBackground).Color = Colors.Orange;
@@ -286,8 +287,8 @@ namespace loppis.ViewModels
 
         private void ExecuteMove()
         {
-            PriceFocused = true;
             SellerIdFocused = false;
+            PriceFocused = true;
         }
 
         #endregion
@@ -297,7 +298,9 @@ namespace loppis.ViewModels
         private bool CanExecuteEntry()
         {
 
-            bool canExecute = CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null && SellerList.ContainsKey(CurrentEntry.SellerId.Value);
+            bool canExecute = CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null &&
+                (SellerList.ContainsKey(CurrentEntry.SellerId.Value) || CurrentEntry.SellerId.Value == RoundUpId);
+
             if (!canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.White)
             {
                 ((SolidColorBrush)SellerIdBackground).Color = Colors.Orange;
@@ -356,15 +359,20 @@ namespace loppis.ViewModels
                 {
                     string[] a = line.Split(";");
                     Seller seller;
+                    int sellerId = int.Parse(a[0]);
+                    if (sellerId == RoundUpId)
+                    {
+                        throw new System.FormatException($"Id 999 is reserved. Please choose another id for row: {line}");
+                    }
                     if (a.Length > 2)
                     {
                         seller = new Seller() { Name = a[1], DefaultPrice = int.Parse(a[2]) };
-                        SellerList.Add(int.Parse(a[0]), seller);
+                        SellerList.Add(sellerId, seller);
                     }
                     else if (a.Length > 1)
                     {
                         seller = new Seller() { Name = a[1], DefaultPrice = null };
-                        SellerList.Add(int.Parse(a[0]), seller);
+                        SellerList.Add(sellerId, seller);
                     }
                     else
                     {
@@ -374,12 +382,12 @@ namespace loppis.ViewModels
                     if (seller.Name == "Kasse" && seller.DefaultPrice != null)
                     {
                         bagEntryInFile = true;
-                        BagId = int.Parse(a[0]);
+                        BagId = sellerId;
                     }
                     if (seller.Name == "Vykort" && seller.DefaultPrice != null)
                     {
                         cardEntryInFile = true;
-                        CardId = int.Parse(a[0]);
+                        CardId = sellerId;
 
                     }
                 }
