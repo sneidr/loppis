@@ -304,10 +304,17 @@ namespace LoppisTest
             SalesViewModel vm = new SalesViewModel(testFileName);
             Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
 
+            Assert.AreEqual(vm.Cashier, "Säljare");
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
+            Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
+
+            vm.Cashier = "Simon";
             Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+
+            vm.Cashier = "";
+            Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
         }
 
         [TestMethod]
@@ -367,6 +374,7 @@ namespace LoppisTest
             }
 
             SalesViewModel vm = new SalesViewModel(testFileName);
+            vm.Cashier = "Simon";
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
@@ -408,6 +416,8 @@ namespace LoppisTest
             }
 
             SalesViewModel vm = new SalesViewModel(testFileName);
+            vm.Cashier = "Simon";
+
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();

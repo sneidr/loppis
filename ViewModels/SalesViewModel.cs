@@ -120,7 +120,7 @@ namespace loppis.ViewModels
 
         private bool CanExecuteSaveToFile()
         {
-            return SumTotal > 0 && ItemList.Count > 0;
+            return SumTotal > 0 && ItemList.Count > 0 && Cashier != "Säljare" && Cashier.Length > 0;
         }
 
         private void ExecuteSaveToFile()
