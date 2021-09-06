@@ -13,11 +13,10 @@
     <Window.Resources>
         <DataTemplate x:Key="EntryItemTemplate">
             <DockPanel HorizontalAlignment="Right" Focusable="False">
-                <TextBlock Text="Säljare: " FontSize="24" Focusable="False"></TextBlock>
-                <TextBlock x:Name="Id" Text="{Binding SellerId}" FontSize="24" Focusable="False"/>
-                <TextBlock x:Name="Spaces" Text="   " FontSize="24" Focusable="False"/>
-                <TextBlock Text="Pris: " FontSize="24" Focusable="False"></TextBlock>
-                <TextBlock x:Name="Price" Text="{Binding Price}" FontSize="24" Focusable="False"/>
+                <TextBlock Text="{Binding SellerIdListText}" FontSize="32" Focusable="False" FontFamily="Consolas" FontWeight="Bold"/>
+                <TextBlock x:Name="Spaces" Text=" " FontSize="32" Focusable="False" FontFamily="Consolas" FontWeight="Bold"/>
+                <TextBlock Text="Pris: " FontSize="32" Focusable="False"  FontFamily="Consolas" FontWeight="Bold"/>
+                <TextBlock x:Name="Price" Text="{Binding PriceListText}" FontSize="32" Focusable="False" FontFamily="Consolas" FontWeight="Bold"/>
             </DockPanel>
         </DataTemplate>
     </Window.Resources>

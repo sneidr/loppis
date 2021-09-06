@@ -1,5 +1,6 @@
 ﻿using Prism.Mvvm;
 using System;
+using System.Xml.Serialization;
 
 namespace loppis.Model
 {
@@ -27,6 +28,36 @@ namespace loppis.Model
 
         public int? SellerId { get => m_sellerId; set { SetProperty(ref m_sellerId, value); } }
         public int? Price { get => m_price; set { SetProperty(ref m_price, value); } }
+
+        [XmlIgnoreAttribute]
+        public string SellerIdListText
+        {
+            get
+            {
+                if (m_sellerId == loppis.ViewModels.SalesViewModel.CardId)
+                {
+                    return "Vykort      ";
+                }
+                else if (m_sellerId == loppis.ViewModels.SalesViewModel.BagId)
+                {
+                    return "Kasse       ";
+                }
+                else
+                {
+                    return $"Säljare: {m_sellerId.ToString(),3}";
+                }
+            }
+        }
+
+        [XmlIgnoreAttribute]
+        public string PriceListText
+        {
+            get
+            {
+                string text = string.Format("{0,3}", m_price);
+                return text;
+            }
+        }
 
         public bool Equals(SaleEntry other)
         {

@@ -70,6 +70,7 @@ namespace LoppisTest
             vm.EnterSale();
 
             Assert.AreEqual(vm.ItemList[0].SellerId, 12);
+            Assert.AreEqual(vm.ItemList[0].SellerIdListText, "Säljare 12");
             Assert.AreEqual(vm.ItemList[0].Price, 62);
         }
 

@@ -67,6 +67,9 @@ namespace loppis.ViewModels
         public ShowMessageBoxDelegate MsgBoxFunction { get; set; }
         public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
         public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
+
+        public static int? CardId { get; set; }
+        public static int? BagId { get; set; }
         #endregion
 
         #region Construction
@@ -91,6 +94,8 @@ namespace loppis.ViewModels
             MsgBoxFunction = MessageBox.Show;
             SellerIdBackground = new SolidColorBrush(Colors.White);
             SellerIdFocused = true;
+            CardId = null;
+            BagId = null;
             Cashier = "Säljare";
         }
 
@@ -369,10 +374,13 @@ namespace loppis.ViewModels
                     if (seller.Name == "Kasse" && seller.DefaultPrice != null)
                     {
                         bagEntryInFile = true;
+                        BagId = int.Parse(a[0]);
                     }
                     if (seller.Name == "Vykort" && seller.DefaultPrice != null)
                     {
                         cardEntryInFile = true;
+                        CardId = int.Parse(a[0]);
+
                     }
                 }
                 if (!bagEntryInFile)
