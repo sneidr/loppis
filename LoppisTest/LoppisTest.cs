@@ -302,6 +302,7 @@ namespace LoppisTest
         public void TestSaveToFile_CanExecute()
         {
             SalesViewModel vm = new SalesViewModel(testFileName);
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.CashierBackground).Color);
             Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
 
             Assert.AreEqual(vm.Cashier, "Säljare");
@@ -309,12 +310,15 @@ namespace LoppisTest
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
             Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
+            Assert.AreEqual(Colors.Orange, ((SolidColorBrush)vm.CashierBackground).Color);
 
             vm.Cashier = "Simon";
             Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.CashierBackground).Color);
 
             vm.Cashier = "";
             Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
+            Assert.AreEqual(Colors.Orange, ((SolidColorBrush)vm.CashierBackground).Color);
         }
 
         [TestMethod]

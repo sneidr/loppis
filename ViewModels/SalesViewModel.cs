@@ -34,6 +34,7 @@ namespace loppis.ViewModels
         private bool sellerIdFocused;
         private bool priceFocused;
         private Brush sellerIdBackground;
+        private Brush cashierBackground;
         private string cashier;
 
         public bool SellerIdFocused
@@ -66,6 +67,7 @@ namespace loppis.ViewModels
         public ShutDownDelegate ShutDownFunction { get; set; }
         public ShowMessageBoxDelegate MsgBoxFunction { get; set; }
         public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
+        public Brush CashierBackground { get => cashierBackground; set => SetProperty(ref cashierBackground, value); }
         public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
 
         public const int RoundUpId = 999;
@@ -94,6 +96,7 @@ namespace loppis.ViewModels
             ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
             MsgBoxFunction = MessageBox.Show;
             SellerIdBackground = new SolidColorBrush(Colors.White);
+            CashierBackground = new SolidColorBrush(Colors.White);
             SellerIdFocused = true;
             CardId = null;
             BagId = null;
@@ -120,7 +123,17 @@ namespace loppis.ViewModels
 
         private bool CanExecuteSaveToFile()
         {
-            return SumTotal > 0 && ItemList.Count > 0 && Cashier != "Säljare" && Cashier.Length > 0;
+            bool validCashierName = Cashier != "Säljare" && Cashier.Length > 0;
+            if (!validCashierName && ((SolidColorBrush)CashierBackground).Color == Colors.White)
+            {
+                CashierBackground = new SolidColorBrush(Colors.Orange);
+            }
+            else if (validCashierName && ((SolidColorBrush)CashierBackground).Color == Colors.Orange)
+            {
+                CashierBackground = new SolidColorBrush(Colors.White);
+            }
+
+            return SumTotal > 0 && ItemList.Count > 0 && validCashierName;
         }
 
         private void ExecuteSaveToFile()
