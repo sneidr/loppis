@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace loppis.Model
 {
-    public class Sale<T>
+    public class Sale
     {
-        List<T> entries = new();
+        List<SaleEntry> entries = new();
         public string Cashier { get; set; }
         public DateTime Timestamp { get; set; }
-        public List<T> Entries { get => entries; set => entries = value; }
+        public string TimestampString
+        {
+            get
+            {
+                return Timestamp.ToShortTimeString();
+            }
+        }
+        public List<SaleEntry> Entries { get => entries; set => entries = value; }
+        public int SumTotal => Entries.Sum((x) => x.Price.GetValueOrDefault());
 
-        public T this[int i]
+        public SaleEntry this[int i]
         {
             get { return entries[i]; }
             set { entries[i] = value; }
@@ -20,7 +29,7 @@ namespace loppis.Model
         {
         }
 
-        public Sale(ObservableCollection<T> inputList, string cashier)
+        public Sale(ObservableCollection<SaleEntry> inputList, string cashier)
         {
             Cashier = cashier;
             Timestamp = DateTime.Now;
@@ -29,7 +38,5 @@ namespace loppis.Model
                 Entries.Add(entry);
             }
         }
-
     }
-
 }

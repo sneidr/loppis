@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<loppis.Model.Sale<loppis.Model.SaleEntry>>;
+using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
 
 namespace loppis.ViewModels
 {
@@ -63,6 +63,8 @@ namespace loppis.ViewModels
         public SaleEntry CurrentEntry { get => currentEntry; set => SetProperty(ref currentEntry, value); }
         public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
         public ObservableCollection<SaleEntry> ItemList { get => itemList; set => SetProperty(ref itemList, value); }
+        public ObservableCollection<Sale> LastSalesList { get; set; }
+
         public bool IdSelected { get => m_idSelected; set => SetProperty(ref m_idSelected, value); }
         public ShutDownDelegate ShutDownFunction { get; set; }
         public ShowMessageBoxDelegate MsgBoxFunction { get; set; }
@@ -71,6 +73,8 @@ namespace loppis.ViewModels
         public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
 
         public const int RoundUpId = 999;
+        private const int NumberOfSalesToShow = 3;
+
         public static int? CardId { get; set; }
         public static int? BagId { get; set; }
         #endregion
@@ -82,7 +86,7 @@ namespace loppis.ViewModels
             SaveFileName = testFileName;
             CurrentEntry = new SaleEntry();
             ItemList = new ObservableCollection<SaleEntry>();
-
+            LastSalesList = new();
             EnterSaleCommand = new DelegateCommand(ExecuteEntry, CanExecuteEntry);
             MoveFocusCommand = new DelegateCommand(ExecuteMove, CanExecuteMove);
             RoundUpCommand = new DelegateCommand(ExecuteRoundUp, CanExecuteRoundUp);
@@ -139,7 +143,13 @@ namespace loppis.ViewModels
         private void ExecuteSaveToFile()
         {
             SaveList entries = ReadFromXmlFile();
-            entries.Add(new Sale<SaleEntry>(ItemList, Cashier));
+            var sale = new Sale(ItemList, Cashier);
+            entries.Add(sale);
+            LastSalesList.Insert(0, sale);
+            if (LastSalesList.Count > NumberOfSalesToShow)
+            {
+                LastSalesList.RemoveAt(NumberOfSalesToShow);
+            }
             WriteToXmlFile(entries);
             ItemList.Clear();
             SumTotal = 0;

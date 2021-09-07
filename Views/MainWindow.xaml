@@ -21,9 +21,11 @@
         </DataTemplate>
         <DataTemplate x:Key="SalesTemplate">
             <DockPanel HorizontalAlignment="Right" Focusable="False">
-                <!--<TextBlock Text="{Binding SellerIdListText}" FontSize="32" Focusable="False" FontFamily="Consolas" FontWeight="Bold"/>
-                <TextBlock x:Name="Spaces" Text=" " FontSize="32" Focusable="False" FontFamily="Consolas" FontWeight="Bold"/>-->
-                <TextBlock Text="Pris: " FontSize="32" Focusable="False"  FontFamily="Consolas" FontWeight="Bold" Background="LightGreen"/>
+                <TextBlock Text="Senaste köp:" FontSize="18" Focusable="False" FontFamily="Consolas" FontStyle="Italic"/>
+                <TextBlock x:Name="Spaces" Text=" " FontSize="18" Focusable="False" FontFamily="Consolas" FontStyle="Italic"/>
+                <TextBlock Text="{Binding SumTotal}" FontSize="18" Focusable="False" FontFamily="Consolas" FontStyle="Italic"/>
+                <TextBlock x:Name="Spaces2" Text="kr " FontSize="18" Focusable="False" FontFamily="Consolas" FontStyle="Italic"/>
+                <TextBlock Text="{Binding TimestampString}" FontSize="18" Focusable="False"  FontFamily="Consolas" FontStyle="Italic"/>
                 <!--<TextBlock x:Name="Price" Text="{Binding PriceListText}" FontSize="32" Focusable="False" FontFamily="Consolas" FontWeight="Bold"/>-->
             </DockPanel>
         </DataTemplate>
@@ -105,7 +107,7 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="3*"/>
+                    <RowDefinition Height="4*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <ListBox Grid.Row="0" x:Name="items" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding ItemList}" ItemTemplate="{StaticResource EntryItemTemplate}" HorizontalContentAlignment="Stretch" PreviewMouseDoubleClick="items_PreviewMouseDoubleClick" MouseLeftButtonUp="items_MouseLeftButtonUp" Focusable="False"/>
@@ -121,8 +123,8 @@
                     <ColumnDefinition Width="350"/>
                 </Grid.ColumnDefinitions>
 
-                <Label x:Name="totalLabel"  BorderThickness="0" Height="100" Background="LightGray" Grid.Column="0" Grid.Row="0" Content="Summa" VerticalContentAlignment="Bottom" FontSize="34"></Label>
-                <Label x:Name="total"  BorderThickness="0" Height="100" Background="LightGray" Grid.Column="1" Grid.Row="0" Content="{Binding SumTotal}" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="80"></Label>
+                <Label x:Name="totalLabel"  BorderThickness="0" Height="100" Background="white" Grid.Column="0" Grid.Row="0" Content="Summa" VerticalContentAlignment="Bottom" FontSize="34"></Label>
+                <Label x:Name="total"  BorderThickness="0" Height="100" Background="white" Grid.Column="1" Grid.Row="0" Content="{Binding SumTotal}" VerticalContentAlignment="Bottom" HorizontalContentAlignment="Right" FontSize="80"></Label>
                 <Button x:Name="newSeller"  BorderThickness="0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Content="Klar" Height="100" Background="Green" FontSize="34">
                     <Behaviors:Interaction.Triggers>
                         <Behaviors:EventTrigger EventName="Click">

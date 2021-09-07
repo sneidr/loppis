@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<loppis.Model.Sale<loppis.Model.SaleEntry>>;
+using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
 
 namespace LoppisTest
 {
@@ -497,6 +497,53 @@ namespace LoppisTest
             var elapsed = stopwatch.ElapsedMilliseconds;
 
             Assert.IsTrue(elapsed / 10 < 500, $"{elapsed} ms");
+        }
+
+        [TestMethod]
+        public void TestSaveToFile_Execute_LastEntriesInList()
+        {
+            if (File.Exists(testFileName))
+            {
+                File.Delete(testFileName);
+            }
+
+            SalesViewModel vm = new SalesViewModel(testFileName);
+            vm.Cashier = "Lisa";
+
+            vm.CurrentEntry.SellerId = 12;
+            vm.CurrentEntry.Price = 80;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+            Assert.AreEqual(vm.LastSalesList[0].SumTotal, 80);
+
+
+            vm.CurrentEntry.SellerId = 15;
+            vm.CurrentEntry.Price = 90;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+            Assert.AreEqual(vm.LastSalesList[0].SumTotal, 90);
+            Assert.AreEqual(vm.LastSalesList[1].SumTotal, 80);
+
+            vm.CurrentEntry.SellerId = 20;
+            vm.CurrentEntry.Price = 100;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+            Assert.AreEqual(vm.LastSalesList[0].SumTotal, 100);
+            Assert.AreEqual(vm.LastSalesList[1].SumTotal, 90);
+            Assert.AreEqual(vm.LastSalesList[2].SumTotal, 80);
+
+            vm.CurrentEntry.SellerId = 20;
+            vm.CurrentEntry.Price = 110;
+            vm.EnterSale();
+            Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
+            vm.SaveToFileCommand.Execute(null);
+            Assert.AreEqual(vm.LastSalesList[0].SumTotal, 110);
+            Assert.AreEqual(vm.LastSalesList[1].SumTotal, 100);
+            Assert.AreEqual(vm.LastSalesList[2].SumTotal, 90);
+            Assert.AreEqual(vm.LastSalesList.Count, 3);
         }
         #endregion
 
