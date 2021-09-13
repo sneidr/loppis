@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace loppis.Model
 {
-    public class Sale
+    public class Sale : IEquatable<Sale>
     {
         List<SaleEntry> entries = new();
         public string Cashier { get; set; }
@@ -37,6 +37,11 @@ namespace loppis.Model
             {
                 Entries.Add(entry);
             }
+        }
+
+        public bool Equals(Sale other)
+        {
+            return Cashier == other.Cashier && Timestamp == other.Timestamp && Entries.SequenceEqual(other.Entries);
         }
     }
 }

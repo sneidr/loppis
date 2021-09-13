@@ -96,6 +96,7 @@ namespace loppis.ViewModels
             LoadCommand = new DelegateCommand(ExecuteLoad, CanExecuteLoad);
             UndoCommand = new DelegateCommand<object>(ExecuteUndo, CanExecuteUndo);
             ClearCommand = new DelegateCommand(ExecuteClear, CanExecuteClear);
+            EditPreviousSaleCommand = new DelegateCommand<object>(EditPreviousSale, CanEditPreviousSale);
             SellerList = new Dictionary<int, Seller>();
             ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
             MsgBoxFunction = MessageBox.Show;
@@ -120,6 +121,7 @@ namespace loppis.ViewModels
         public ICommand LoadCommand { get; set; }
         public ICommand UndoCommand { get; set; }
         public ICommand ClearCommand { get; set; }
+        public ICommand EditPreviousSaleCommand { get; set; }
         public Dictionary<int, Seller> SellerList { get; set; }
 
         #region SaveToFile Command
@@ -452,7 +454,7 @@ namespace loppis.ViewModels
 
         private void ExecuteUndo(object param)
         {
-            CurrentEntry = itemList[(int)param];
+            CurrentEntry = ItemList[(int)param];
             ItemList.RemoveAt((int)param);
             UpdateSumTotal();
             SetFocusToSellerId();
@@ -472,6 +474,30 @@ namespace loppis.ViewModels
             CurrentEntry.SellerId = null;
             CurrentEntry.Price = null;
             SetFocusToSellerId();
+        }
+
+        #endregion
+
+        #region EditPreviousSaleCommand
+        private bool CanEditPreviousSale(object param)
+        {
+            return LastSalesList.Count > 0 && itemList.Count == 0;
+        }
+
+        private void EditPreviousSale(object param)
+        {
+            var sale = LastSalesList[(int)param];
+            foreach (var entry in sale.Entries)
+            {
+                ItemList.Add(entry);
+            }
+            LastSalesList.Remove(sale);
+
+            UpdateSumTotal();
+
+            SaveList entries = ReadFromXmlFile();
+            entries.Remove(sale);
+            WriteToXmlFile(entries);
         }
 
         #endregion

@@ -111,7 +111,7 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <ListBox Grid.Row="0" x:Name="items" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding ItemList}" ItemTemplate="{StaticResource EntryItemTemplate}" HorizontalContentAlignment="Stretch" PreviewMouseDoubleClick="items_PreviewMouseDoubleClick" MouseLeftButtonUp="items_MouseLeftButtonUp" Focusable="False"/>
-                <ListBox Grid.Row="1" x:Name="lastSales" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding LastSalesList}" ItemTemplate="{StaticResource SalesTemplate}" HorizontalContentAlignment="Stretch" Focusable="False" Background="LightGray"/>
+                <ListBox Grid.Row="1" x:Name="lastSales" VerticalAlignment="Stretch" BorderThickness="0" ItemsSource="{Binding LastSalesList}" ItemTemplate="{StaticResource SalesTemplate}" HorizontalContentAlignment="Stretch" Focusable="False" Background="LightGray" MouseLeftButtonUp="lastSales_MouseLeftButtonUp"/>
             </Grid>
             <Grid Grid.Row ="1">
                 <Grid.RowDefinitions>
