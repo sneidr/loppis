@@ -1,8 +1,7 @@
-﻿namespace loppis.ViewModels
+﻿namespace loppis.ViewModels;
+
+public class Seller
 {
-    public class Seller
-    {
-        public string Name { get; set; }
-        public int? DefaultPrice { get; set; }
-    }
+    public string Name { get; set; }
+    public int? DefaultPrice { get; set; }
 }
