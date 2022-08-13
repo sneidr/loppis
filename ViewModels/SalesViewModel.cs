@@ -159,11 +159,9 @@ public class SalesViewModel : BindableBase
 
     private void WriteToXmlFile(SaveList entries)
     {
-        using (var filestream = new FileStream(SaveFileName, FileMode.Truncate))
-        {
-            var xmlwriter = new XmlSerializer(typeof(SaveList));
-            xmlwriter.Serialize(filestream, (SaveList)entries);
-        }
+        using var filestream = new FileStream(SaveFileName, FileMode.Truncate);
+        var xmlwriter = new XmlSerializer(typeof(SaveList));
+        xmlwriter.Serialize(filestream, (SaveList)entries);
     }
 
     private SaveList ReadFromXmlFile()

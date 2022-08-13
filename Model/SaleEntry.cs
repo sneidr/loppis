@@ -48,7 +48,7 @@ public class SaleEntry : BindableBase, IEquatable<SaleEntry>
             }
             else
             {
-                return $"Säljare: {m_sellerId.ToString(),3}";
+                return $"Säljare: {m_sellerId,3}";
             }
         }
     }
