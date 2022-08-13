@@ -25,7 +25,7 @@ namespace LoppisTest
             File.Create(sellerFileName).Close();
             File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
             vm.LoadCommand.Execute(null);
@@ -42,7 +42,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestEnterOneSale_SumIsEqualToPrice()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
@@ -53,7 +53,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestEnterOneSale_ListHasOneEntry()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
@@ -64,7 +64,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestEnterOneSale_ListEntryCorrect()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
@@ -77,7 +77,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestEnterMultipleSales_ListHasMultipleEntries()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
@@ -93,7 +93,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestEnterOneSale_VMIsClearedAfterEntry()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 12;
             vm.EnterSale();
@@ -105,7 +105,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestEnterOneSale_RoundUpSellerIdIsOk()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.Price = 62;
             vm.CurrentEntry.SellerId = 999;
             Assert.IsTrue(vm.EnterSaleCommand.CanExecute(null));
@@ -124,7 +124,7 @@ namespace LoppisTest
             File.Create(sellerFileName).Close();
             File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
 
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
@@ -149,7 +149,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestBagCommand_CanExecute()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             Assert.IsTrue(vm.BagCommand.CanExecute(null));
 
             vm.CurrentEntry.Price = 12;
@@ -167,7 +167,7 @@ namespace LoppisTest
         public void TestBagCommand_Execute()
         {
             {
-                SalesViewModel vm = new SalesViewModel();
+                SalesViewModel vm = new();
                 vm.SellerList.Add(92, new Seller() { Name = "Kasse", DefaultPrice = 7 });
                 vm.BagCommand.Execute(null);
 
@@ -184,7 +184,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestCardCommand_CanExecute()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             Assert.IsTrue(vm.CardCommand.CanExecute(null));
 
             vm.CurrentEntry.Price = 12;
@@ -201,7 +201,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestCardCommand_Execute()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.SellerList.Add(200, new Seller() { Name = "Vykort", DefaultPrice = 27 });
             vm.CardCommand.Execute(null);
             Assert.AreEqual(vm.CurrentEntry.SellerId, 200);
@@ -213,7 +213,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestCardCommand_TryTwice_Focus()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             if (vm.CardCommand.CanExecute(null))
             {
                 vm.CardCommand.Execute(null);
@@ -234,7 +234,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestRoundUpCommand_CanExecute()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             Assert.IsFalse(vm.RoundUpCommand.CanExecute(null));
 
             vm.CurrentEntry.Price = 12;
@@ -264,7 +264,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestRoundUpCommand_Execute()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 43;
             vm.EnterSaleCommand.Execute(null);
@@ -280,7 +280,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestRoundUpCommand_Execute_DivisibleBy50()
         {
-            SalesViewModel vm = new SalesViewModel();
+            SalesViewModel vm = new();
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 50;
             vm.EnterSaleCommand.Execute(null);
@@ -301,7 +301,7 @@ namespace LoppisTest
         [TestMethod]
         public void TestSaveToFile_CanExecute()
         {
-            SalesViewModel vm = new SalesViewModel(testFileName);
+            SalesViewModel vm = new(testFileName);
             Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.CashierBackground).Color);
             Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
 
@@ -329,8 +329,10 @@ namespace LoppisTest
                 File.Delete(testFileName);
             }
 
-            SalesViewModel vm = new SalesViewModel(testFileName);
-            vm.Cashier = "Lisa";
+            SalesViewModel vm = new(testFileName)
+            {
+                Cashier = "Lisa"
+            };
 
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
@@ -377,8 +379,10 @@ namespace LoppisTest
             {
             }
 
-            SalesViewModel vm = new SalesViewModel(testFileName);
-            vm.Cashier = "Simon";
+            SalesViewModel vm = new(testFileName)
+            {
+                Cashier = "Simon"
+            };
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
             vm.EnterSale();
@@ -419,8 +423,10 @@ namespace LoppisTest
                 streamWriter.WriteLine("ErrorText");
             }
 
-            SalesViewModel vm = new SalesViewModel(testFileName);
-            vm.Cashier = "Simon";
+            SalesViewModel vm = new(testFileName)
+            {
+                Cashier = "Simon"
+            };
 
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
@@ -475,7 +481,7 @@ namespace LoppisTest
             {
             }
 
-            SalesViewModel vm = new SalesViewModel(testFileName);
+            SalesViewModel vm = new(testFileName);
 
             var stopwatch = new Stopwatch();
             for (int i = 1; i <= 250; i++)
@@ -507,8 +513,10 @@ namespace LoppisTest
                 File.Delete(testFileName);
             }
 
-            SalesViewModel vm = new SalesViewModel(testFileName);
-            vm.Cashier = "Lisa";
+            SalesViewModel vm = new(testFileName)
+            {
+                Cashier = "Lisa"
+            };
 
             vm.CurrentEntry.SellerId = 12;
             vm.CurrentEntry.Price = 80;
@@ -559,10 +567,11 @@ namespace LoppisTest
             {
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
-                SalesViewModel vm = new SalesViewModel(testFileName);
-
-                vm.ShutDownFunction = () => { isShutDown = true; };
-                vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
+                SalesViewModel vm = new(testFileName)
+                {
+                    ShutDownFunction = () => { isShutDown = true; },
+                    MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; }
+                };
                 Assert.IsTrue(vm.LoadCommand.CanExecute(null));
                 vm.LoadCommand.Execute(null);
 
@@ -574,7 +583,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;78\r\n8;Vykort;15");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 Assert.IsTrue(vm.LoadCommand.CanExecute(null));
                 vm.LoadCommand.Execute(null);
 
@@ -585,7 +594,7 @@ namespace LoppisTest
                 File.Delete(sellerFileName);
                 File.Create(sellerFileName).Close();
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -601,7 +610,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "A;Firstname LastName\r\n2;John Doe\r\n7;Kasse");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -617,7 +626,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -633,7 +642,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1 Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -649,7 +658,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1 Firstname LastName 1;John Doe 7;Kasse");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -664,7 +673,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;5");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 Assert.IsTrue(vm.LoadCommand.CanExecute(null));
                 vm.LoadCommand.Execute(null);
 
@@ -675,7 +684,7 @@ namespace LoppisTest
             { // Error: Default price not int
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;Hej");
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -691,7 +700,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Vykort;15");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -706,7 +715,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort;15");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -721,7 +730,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;15");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -736,7 +745,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;23\r\n8;Vykort");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
@@ -751,7 +760,7 @@ namespace LoppisTest
                 File.Create(sellerFileName).Close();
                 File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;55\r\n8;Vykort;23\r\n999;Ajajaj");
 
-                SalesViewModel vm = new SalesViewModel(testFileName);
+                SalesViewModel vm = new(testFileName);
                 bool isShutDown = false;
                 bool wasMessageBoxShown = false;
                 vm.ShutDownFunction = () => { isShutDown = true; };
