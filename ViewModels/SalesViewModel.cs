@@ -1,6 +1,7 @@
 ﻿using loppis.Model;
 using Prism.Commands;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -126,10 +127,16 @@ public class SalesViewModel : BindableBase
 
     #region SaveToFile Command
 
-
     private bool CanExecuteSaveToFile()
     {
-        bool validCashierName = Cashier != "Säljare" && Cashier.Length > 0;
+        bool validCashierName = IsCashierNameValid();
+        SetCashierBackground(validCashierName);
+
+        return SumTotal > 0 && ItemList.Count > 0 && validCashierName;
+    }
+
+    private void SetCashierBackground(bool validCashierName)
+    {
         if (!validCashierName && ((SolidColorBrush)CashierBackground).Color == Colors.White)
         {
             CashierBackground = new SolidColorBrush(Colors.Orange);
@@ -138,8 +145,11 @@ public class SalesViewModel : BindableBase
         {
             CashierBackground = new SolidColorBrush(Colors.White);
         }
+    }
 
-        return SumTotal > 0 && ItemList.Count > 0 && validCashierName;
+        private bool IsCashierNameValid()
+    {
+        return Cashier != "Säljare" && Cashier.Length > 0;
     }
 
     private void ExecuteSaveToFile()
