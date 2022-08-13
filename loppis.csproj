@@ -1,46 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
-    <UseWPF>true</UseWPF>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="LoppisTest\**" />
-    <Compile Remove="LoppisTest_old\**" />
-    <Compile Remove="payback\**" />
-    <Compile Remove="specs\**" />
-    <Compile Remove="TestResults\**" />
-    <EmbeddedResource Remove="LoppisTest\**" />
-    <EmbeddedResource Remove="LoppisTest_old\**" />
-    <EmbeddedResource Remove="payback\**" />
-    <EmbeddedResource Remove="specs\**" />
-    <EmbeddedResource Remove="TestResults\**" />
-    <None Remove="LoppisTest\**" />
-    <None Remove="LoppisTest_old\**" />
-    <None Remove="payback\**" />
-    <None Remove="specs\**" />
-    <None Remove="TestResults\**" />
-    <Page Remove="LoppisTest\**" />
-    <Page Remove="LoppisTest_old\**" />
-    <Page Remove="payback\**" />
-    <Page Remove="specs\**" />
-    <Page Remove="TestResults\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="LoppisTest\**" />
+		<Compile Remove="payback\**" />
+		<Compile Remove="specs\**" />
+		<Compile Remove="stats\**" />
+		<Compile Remove="LoppisMail\**" />
+		<Compile Remove="TestResults\**" />
+		<EmbeddedResource Remove="LoppisTest\**" />
+		<EmbeddedResource Remove="payback\**" />
+		<EmbeddedResource Remove="specs\**" />
+		<EmbeddedResource Remove="stats\**" />
+		<EmbeddedResource Remove="LoppisMail\**" />
+		<EmbeddedResource Remove="TestResults\**" />
+		<None Remove="LoppisTest\**" />
+		<None Remove="payback\**" />
+		<None Remove="specs\**" />
+		<None Remove="stats\**" />
+		<None Remove="LoppisMail\**" />
+		<None Remove="TestResults\**" />
+		<Page Remove="LoppisTest\**" />
+		<Page Remove="payback\**" />
+		<Page Remove="specs\**" />
+		<Page Remove="stats\**" />
+		<Page Remove="LoppisMail\**" />
+		<Page Remove="TestResults\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Views\loppa.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Views\loppa.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
-    <PackageReference Include="Prism.Core" Version="8.1.97" />
-    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
+		<PackageReference Include="Prism.Wpf" Version="8.1.97" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Views\loppa.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Views\loppa.png" />
+	</ItemGroup>
 
 </Project>
