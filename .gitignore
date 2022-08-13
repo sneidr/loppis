@@ -5,10 +5,19 @@
 obj
 bin
 
+# Data
+Data
+
 # Executables
 *.exe
 *.out
 *.app
 
+# Backups
+*.bak
+
 # Test Results
 TestResults
+
+# Mail
+mailtexter
