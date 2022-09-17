@@ -1,5 +1,6 @@
 ﻿using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
@@ -12,6 +13,9 @@ internal class TestFiles
 {
     private const string sellerFile = @".\sellers.csv";
     public static string TransactionsFile => @".\mytestfile.xml";
+
+    public static string FirstErrorFile = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error1{Path.GetExtension(TestFiles.TransactionsFile)}";
+    public static string SeccondErrorFile = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error2{Path.GetExtension(TestFiles.TransactionsFile)}";
 
     public static void RemoveTransactionsFile()
     {
@@ -43,6 +47,18 @@ internal class TestFiles
 
         File.Create(sellerFile).Close();
         File.WriteAllText(sellerFile, contents);
+    }
+
+    public static void RemoveErrorFiles()
+    {
+        if (File.Exists(FirstErrorFile))
+        {
+            File.Delete(FirstErrorFile);
+        }
+        if (File.Exists(SeccondErrorFile))
+        {
+            File.Delete(SeccondErrorFile);
+        }
     }
 }
 
@@ -419,18 +435,8 @@ public class LoppisTest
     [TestMethod]
     public void TestSaveToFile_Execute_FileWrongFormat()
     {
-        string testFirstErrorFileName = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error1{Path.GetExtension(TestFiles.TransactionsFile)}";
-        string testSecondErrorFileName = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error2{Path.GetExtension(TestFiles.TransactionsFile)}";
-
-        if (File.Exists(testFirstErrorFileName))
-        {
-            File.Delete(testFirstErrorFileName);
-        }
-        if (File.Exists(testSecondErrorFileName))
-        {
-            File.Delete(testSecondErrorFileName);
-        }
         TestFiles.SetupTransactionsFile("ErrorText");
+        TestFiles.RemoveErrorFiles();
 
         SalesViewModel vm = new(TestFiles.TransactionsFile)
         {
@@ -453,11 +459,11 @@ public class LoppisTest
         Assert.AreEqual(entries[0][0].SellerId, 12);
         Assert.AreEqual(entries[0][0].Price, 80);
 
-        Assert.IsTrue(File.Exists(testFirstErrorFileName));
-        Assert.IsFalse(File.Exists(testSecondErrorFileName));
+        Assert.IsTrue(File.Exists(TestFiles.FirstErrorFile));
+        Assert.IsFalse(File.Exists(TestFiles.SeccondErrorFile));
 
         File.Delete(TestFiles.TransactionsFile);
-        File.Copy(testFirstErrorFileName, TestFiles.TransactionsFile);
+        File.Copy(TestFiles.FirstErrorFile, TestFiles.TransactionsFile);
 
         vm.CurrentEntry.SellerId = 12;
         vm.CurrentEntry.Price = 80;
@@ -475,7 +481,7 @@ public class LoppisTest
         Assert.AreEqual(entries[0][0].SellerId, 12);
         Assert.AreEqual(entries[0][0].Price, 80);
 
-        Assert.IsTrue(File.Exists(testSecondErrorFileName));
+        Assert.IsTrue(File.Exists(TestFiles.SeccondErrorFile));
     }
 
     [TestMethod]
