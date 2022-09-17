@@ -10,14 +10,30 @@ namespace LoppisTest;
 
 internal class TestFiles
 {
-    private const string testFileName = @".\mytestfile.xml";
-    private const string sellerFileName = @".\sellers.csv";
+    private const string sellerFile = @".\sellers.csv";
+    public static string TransactionsFile => @".\mytestfile.xml";
+
+    public static void RemoveTransactionsFile()
+    {
+        if (File.Exists(TransactionsFile))
+        {
+            File.Delete(TransactionsFile);
+        }
+    }
+
+    public static void SetupTransactionsFile(string contents)
+    {
+        RemoveTransactionsFile();
+
+        File.Create(TransactionsFile).Close();
+        File.WriteAllText(TransactionsFile, contents);
+    }
 
     public static void RemoveConfigFile()
     {
-        if (File.Exists(sellerFileName))
+        if (File.Exists(sellerFile))
         {
-            File.Delete(sellerFileName);
+            File.Delete(sellerFile);
         }
     }
 
@@ -25,16 +41,14 @@ internal class TestFiles
     {
         RemoveConfigFile();
 
-        File.Create(sellerFileName).Close();
-        File.WriteAllText(sellerFileName, contents);
+        File.Create(sellerFile).Close();
+        File.WriteAllText(sellerFile, contents);
     }
 }
 
 [TestClass]
 public class LoppisTest
 {
-    private const string testFileName = @".\mytestfile.xml";
-
     #region EnterSale Tests
     [TestMethod]
     public void TestCanEnterSale_SellerIdInvalid()
@@ -312,7 +326,7 @@ public class LoppisTest
     [TestMethod]
     public void TestSaveToFile_CanExecute()
     {
-        SalesViewModel vm = new(testFileName);
+        SalesViewModel vm = new(TestFiles.TransactionsFile);
         Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.CashierBackground).Color);
         Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
 
@@ -335,12 +349,9 @@ public class LoppisTest
     [TestMethod]
     public void TestSaveToFile_Execute()
     {
-        if (File.Exists(testFileName))
-        {
-            File.Delete(testFileName);
-        }
+        TestFiles.RemoveTransactionsFile();
 
-        SalesViewModel vm = new(testFileName)
+        SalesViewModel vm = new(TestFiles.TransactionsFile)
         {
             Cashier = "Lisa"
         };
@@ -361,7 +372,7 @@ public class LoppisTest
         vm.SaveToFileCommand.Execute(null);
 
         var entries = new SaveList();
-        using (var filestream = new FileStream(testFileName, FileMode.Open))
+        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
@@ -382,15 +393,9 @@ public class LoppisTest
     [TestMethod]
     public void TestSaveToFile_Execute_FileExists()
     {
-        if (File.Exists(testFileName))
-        {
-            File.Delete(testFileName);
-        }
-        using (var fs = new FileStream(testFileName, FileMode.Create))
-        {
-        }
+        TestFiles.SetupTransactionsFile("");
 
-        SalesViewModel vm = new(testFileName)
+        SalesViewModel vm = new(TestFiles.TransactionsFile)
         {
             Cashier = "Simon"
         };
@@ -401,7 +406,7 @@ public class LoppisTest
         vm.SaveToFileCommand.Execute(null);
 
         var entries = new SaveList();
-        using (var filestream = new FileStream(testFileName, FileMode.Open))
+        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
@@ -414,13 +419,9 @@ public class LoppisTest
     [TestMethod]
     public void TestSaveToFile_Execute_FileWrongFormat()
     {
-        string testFirstErrorFileName = $"{Path.GetFileNameWithoutExtension(testFileName)}_error1{Path.GetExtension(testFileName)}";
-        string testSecondErrorFileName = $"{Path.GetFileNameWithoutExtension(testFileName)}_error2{Path.GetExtension(testFileName)}";
+        string testFirstErrorFileName = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error1{Path.GetExtension(TestFiles.TransactionsFile)}";
+        string testSecondErrorFileName = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error2{Path.GetExtension(TestFiles.TransactionsFile)}";
 
-        if (File.Exists(testFileName))
-        {
-            File.Delete(testFileName);
-        }
         if (File.Exists(testFirstErrorFileName))
         {
             File.Delete(testFirstErrorFileName);
@@ -429,12 +430,9 @@ public class LoppisTest
         {
             File.Delete(testSecondErrorFileName);
         }
-        using (var streamWriter = new StreamWriter(testFileName))
-        {
-            streamWriter.WriteLine("ErrorText");
-        }
+        TestFiles.SetupTransactionsFile("ErrorText");
 
-        SalesViewModel vm = new(testFileName)
+        SalesViewModel vm = new(TestFiles.TransactionsFile)
         {
             Cashier = "Simon"
         };
@@ -446,7 +444,7 @@ public class LoppisTest
         vm.SaveToFileCommand.Execute(null);
 
         var entries = new SaveList();
-        using (var filestream = new FileStream(testFileName, FileMode.Open))
+        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
@@ -458,8 +456,8 @@ public class LoppisTest
         Assert.IsTrue(File.Exists(testFirstErrorFileName));
         Assert.IsFalse(File.Exists(testSecondErrorFileName));
 
-        File.Delete(testFileName);
-        File.Copy(testFirstErrorFileName, testFileName);
+        File.Delete(TestFiles.TransactionsFile);
+        File.Copy(testFirstErrorFileName, TestFiles.TransactionsFile);
 
         vm.CurrentEntry.SellerId = 12;
         vm.CurrentEntry.Price = 80;
@@ -468,7 +466,7 @@ public class LoppisTest
         vm.SaveToFileCommand.Execute(null);
 
         entries = new SaveList();
-        using (var filestream = new FileStream(testFileName, FileMode.Open))
+        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
@@ -484,15 +482,9 @@ public class LoppisTest
     [Ignore]
     public void TestSaveToFile_Execute_Performance()
     {
-        if (File.Exists(testFileName))
-        {
-            File.Delete(testFileName);
-        }
-        using (var fs = new FileStream(testFileName, FileMode.Create))
-        {
-        }
+        TestFiles.SetupTransactionsFile("");
 
-        SalesViewModel vm = new(testFileName);
+        SalesViewModel vm = new(TestFiles.TransactionsFile);
 
         var stopwatch = new Stopwatch();
         for (int i = 1; i <= 250; i++)
@@ -519,12 +511,10 @@ public class LoppisTest
     [TestMethod]
     public void TestSaveToFile_Execute_LastEntriesInList()
     {
-        if (File.Exists(testFileName))
-        {
-            File.Delete(testFileName);
-        }
+        TestFiles.RemoveTransactionsFile();
 
-        SalesViewModel vm = new(testFileName)
+
+        SalesViewModel vm = new(TestFiles.TransactionsFile)
         {
             Cashier = "Lisa"
         };
@@ -576,7 +566,7 @@ public class LoppisTest
         {
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
-            SalesViewModel vm = new(testFileName)
+            SalesViewModel vm = new(TestFiles.TransactionsFile)
             {
                 ShutDownFunction = () => { isShutDown = true; },
                 MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; }
@@ -592,7 +582,7 @@ public class LoppisTest
 
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;78\r\n8;Vykort;15");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
             vm.LoadCommand.Execute(null);
 
@@ -602,7 +592,7 @@ public class LoppisTest
         { // Error: Empty file
             TestFiles.SetupConfigFile("");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -616,7 +606,7 @@ public class LoppisTest
         { // Error: Cannot convert to int
             TestFiles.SetupConfigFile("A;Firstname LastName\r\n2;John Doe\r\n7;Kasse");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -630,7 +620,7 @@ public class LoppisTest
         { // Error: Duplicate ids
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -644,7 +634,7 @@ public class LoppisTest
         { // Error: Missing semicolon
             TestFiles.SetupConfigFile("1 Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -658,7 +648,7 @@ public class LoppisTest
         { // Error: Missing line breaks
             TestFiles.SetupConfigFile("1 Firstname LastName 1;John Doe 7;Kasse");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -672,7 +662,7 @@ public class LoppisTest
         { // Default price
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;5");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
             vm.LoadCommand.Execute(null);
 
@@ -682,7 +672,7 @@ public class LoppisTest
         }
         { // Error: Default price not int
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;Hej");
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -697,7 +687,7 @@ public class LoppisTest
         { // Error: No bag entry in file
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Vykort;15");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -711,7 +701,7 @@ public class LoppisTest
         { // Error: No default price for bag entry
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort;15");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -725,7 +715,7 @@ public class LoppisTest
         { // Error: No card entry in file
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;15");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -739,7 +729,7 @@ public class LoppisTest
         { // Error: No default price for card entry
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;23\r\n8;Vykort");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -753,7 +743,7 @@ public class LoppisTest
         { // Error: 999 is reserved for roundup
             TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;55\r\n8;Vykort;23\r\n999;Ajajaj");
 
-            SalesViewModel vm = new(testFileName);
+            SalesViewModel vm = new(TestFiles.TransactionsFile);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
             vm.ShutDownFunction = () => { isShutDown = true; };
@@ -839,12 +829,10 @@ public class LoppisTest
     [TestMethod]
     public void TestEditPreviousSaleCommand()
     {
-        if (File.Exists(testFileName))
-        {
-            File.Delete(testFileName);
-        }
+        TestFiles.RemoveTransactionsFile();
 
-        SalesViewModel vm = new(testFileName);
+
+        SalesViewModel vm = new(TestFiles.TransactionsFile);
         Assert.IsFalse(vm.EditPreviousSaleCommand.CanExecute(0));
 
         vm.CurrentEntry.SellerId = 3;
@@ -883,7 +871,7 @@ public class LoppisTest
             Assert.AreEqual(vm.LastSalesList.Count, 1);
 
             var entries = new SaveList();
-            using (var filestream = new FileStream(testFileName, FileMode.Open))
+            using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
             {
                 var xmlreader = new XmlSerializer(typeof(SaveList));
                 entries = (SaveList)xmlreader.Deserialize(filestream);
@@ -906,7 +894,7 @@ public class LoppisTest
             Assert.AreEqual(vm.LastSalesList.Count, 0);
 
             var entries = new SaveList();
-            using (var filestream = new FileStream(testFileName, FileMode.Open))
+            using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
             {
                 var xmlreader = new XmlSerializer(typeof(SaveList));
                 entries = (SaveList)xmlreader.Deserialize(filestream);
