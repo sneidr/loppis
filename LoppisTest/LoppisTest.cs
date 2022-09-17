@@ -8,22 +8,38 @@ using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
 
 namespace LoppisTest;
 
-[TestClass]
-public class LoppisTest
+internal class TestFiles
 {
     private const string testFileName = @".\mytestfile.xml";
     private const string sellerFileName = @".\sellers.csv";
 
-    #region EnterSale Tests
-    [TestMethod]
-    public void TestCanEnterSale_SellerIdInvalid()
+    public static void RemoveConfigFile()
     {
         if (File.Exists(sellerFileName))
         {
             File.Delete(sellerFileName);
         }
+    }
+
+    public static void SetupConfigFile(string contents)
+    {
+        RemoveConfigFile();
+
         File.Create(sellerFileName).Close();
-        File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
+        File.WriteAllText(sellerFileName, contents);
+    }
+}
+
+[TestClass]
+public class LoppisTest
+{
+    private const string testFileName = @".\mytestfile.xml";
+
+    #region EnterSale Tests
+    [TestMethod]
+    public void TestCanEnterSale_SellerIdInvalid()
+    {
+        TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         SalesViewModel vm = new();
         Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
@@ -117,12 +133,7 @@ public class LoppisTest
     [TestMethod]
     public void TestMove_InvalidSellerId()
     {
-        if (File.Exists(sellerFileName))
-        {
-            File.Delete(sellerFileName);
-        }
-        File.Create(sellerFileName).Close();
-        File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
+        TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         SalesViewModel vm = new();
         Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.SellerIdBackground).Color);
@@ -560,10 +571,8 @@ public class LoppisTest
     [TestMethod]
     public void TestLoadCommand()
     {
-        if (File.Exists(sellerFileName))
-        {
-            File.Delete(sellerFileName);
-        }
+        TestFiles.RemoveConfigFile();
+
         {
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
@@ -580,8 +589,8 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         {
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;78\r\n8;Vykort;15");
+
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;78\r\n8;Vykort;15");
 
             SalesViewModel vm = new(testFileName);
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
@@ -591,8 +600,7 @@ public class LoppisTest
             Assert.AreEqual("John Doe", vm.SellerList[2].Name);
         }
         { // Error: Empty file
-            File.Delete(sellerFileName);
-            File.Create(sellerFileName).Close();
+            TestFiles.SetupConfigFile("");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -606,9 +614,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: Cannot convert to int
-            File.Delete(sellerFileName);
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "A;Firstname LastName\r\n2;John Doe\r\n7;Kasse");
+            TestFiles.SetupConfigFile("A;Firstname LastName\r\n2;John Doe\r\n7;Kasse");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -622,9 +628,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: Duplicate ids
-            File.Delete(sellerFileName);
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n1;John Doe\r\n7;Kasse");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -638,9 +642,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: Missing semicolon
-            File.Delete(sellerFileName);
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1 Firstname LastName\r\n1;John Doe\r\n7;Kasse");
+            TestFiles.SetupConfigFile("1 Firstname LastName\r\n1;John Doe\r\n7;Kasse");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -654,9 +656,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: Missing line breaks
-            File.Delete(sellerFileName);
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1 Firstname LastName 1;John Doe 7;Kasse");
+            TestFiles.SetupConfigFile("1 Firstname LastName 1;John Doe 7;Kasse");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -670,8 +670,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Default price
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;5");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;5");
 
             SalesViewModel vm = new(testFileName);
             Assert.IsTrue(vm.LoadCommand.CanExecute(null));
@@ -682,8 +681,7 @@ public class LoppisTest
             Assert.AreEqual(5, vm.SellerList[11].DefaultPrice);
         }
         { // Error: Default price not int
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;Hej");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;Hej");
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
             bool wasMessageBoxShown = false;
@@ -697,8 +695,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: No bag entry in file
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Vykort;15");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Vykort;15");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -712,8 +709,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: No default price for bag entry
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort;15");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse\r\n8;Vykort;15");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -727,8 +723,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: No card entry in file
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;15");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;15");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -742,8 +737,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: No default price for card entry
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;23\r\n8;Vykort");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;23\r\n8;Vykort");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
@@ -757,8 +751,7 @@ public class LoppisTest
             Assert.IsTrue(wasMessageBoxShown);
         }
         { // Error: 999 is reserved for roundup
-            File.Create(sellerFileName).Close();
-            File.WriteAllText(sellerFileName, "1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;55\r\n8;Vykort;23\r\n999;Ajajaj");
+            TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;55\r\n8;Vykort;23\r\n999;Ajajaj");
 
             SalesViewModel vm = new(testFileName);
             bool isShutDown = false;
