@@ -316,11 +316,20 @@ public class SalesViewModel : BindableBase
         XmlDocument doc = new();
         doc.Load("./config/settings.xml");
         {
-            XmlNode node = doc.DocumentElement.SelectSingleNode("//ConnectionString");
-            string connectionString = node?.InnerText ?? "";
-            if (connectionString != string.Empty)
+            XmlNode node = doc.DocumentElement.SelectSingleNode("//DBConfig");
+            if(node != null)
             {
-                dataAccess.Add(new MongoDbDataAccess(connectionString));
+                var dbUser = node?.Attributes["User"].Value ?? String.Empty;
+                var dbPassword = node?.Attributes["Password"].Value ?? String.Empty;
+
+                if(!string.IsNullOrEmpty(dbUser) && !string.IsNullOrEmpty(dbPassword))
+                {
+                    string connectionString = $"mongodb+srv://{dbUser}:{dbPassword}@cluster0.xuvri.mongodb.net/?retryWrites=true&w=majority";
+                    if (connectionString != string.Empty)
+                    {
+                        dataAccess.Add(new MongoDbDataAccess(connectionString));
+                    }
+                }
             }
         }
         LoadSellerList(cSellerFileName);

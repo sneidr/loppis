@@ -4,6 +4,7 @@ using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LoppisTest;
 
@@ -14,12 +15,14 @@ public class TestDataAccessCollection : IDataAccessCollection
         _dataAccess.Add(dataAccess);
     }
 
-    public void RemoveSale(Sale sale)
+    public Task RemoveSale(Sale sale)
     {
+        return Task.Run(() => { });
     }
 
-    public void WriteSale(Sale sale)
+    public Task WriteSale(Sale sale)
     {
+        return Task.Run(() => { });
     }
 
     public List<IDataAccess> _dataAccess = new();

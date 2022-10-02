@@ -1,9 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace DataAccess.Model;
 
 public class Sale : IEquatable<Sale>
 {
+    [XmlIgnore]
+    [BsonId]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; }
+
     List<SaleEntry> entries = new();
     public string Cashier { get; set; }
     public DateTime Timestamp { get; set; }

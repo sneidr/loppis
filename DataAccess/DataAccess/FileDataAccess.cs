@@ -11,18 +11,24 @@ public class FileDataAccess : IDataAccess
         SaveFileName = fileName;
     }
 
-    public void WriteSale(Sale sale)
+    public Task WriteSale(Sale sale)
     {
-        SaveList entries = ReadFromXmlFile();
-        entries.Add(sale);
-        WriteToXmlFile(entries);
+        return Task.Run(() =>
+        {
+            SaveList entries = ReadFromXmlFile();
+            entries.Add(sale);
+            WriteToXmlFile(entries);
+        });
     }
 
-    public void RemoveSale(Sale sale)
+    public Task RemoveSale(Sale sale)
     {
-        SaveList entries = ReadFromXmlFile();
-        entries.Remove(sale);
-        WriteToXmlFile(entries);
+        return Task.Run(() =>
+        {
+            SaveList entries = ReadFromXmlFile();
+            entries.Remove(sale);
+            WriteToXmlFile(entries);
+        });
 
     }
 

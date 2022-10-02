@@ -9,19 +9,19 @@ public class DataAccessCollection : IDataAccessCollection
         _dataAccess.Add(dataAccess);
     }
 
-    public void WriteSale(Sale sale)
+    public async Task WriteSale(Sale sale)
     {
         foreach (var dataAccess in _dataAccess)
         {
-            dataAccess.WriteSale(sale);
+            await dataAccess.WriteSale(sale);
         }
     }
 
-    public void RemoveSale(Sale sale)
+    public async Task RemoveSale(Sale sale)
     {
         foreach (var dataAccess in _dataAccess)
         {
-            dataAccess.RemoveSale(sale);
+            await dataAccess.RemoveSale(sale);
         }
     }
 
