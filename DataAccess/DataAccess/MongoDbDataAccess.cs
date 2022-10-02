@@ -9,6 +9,11 @@ public class MongoDbDataAccess : IDataAccess
     //private const string choreCollection = "chore_chart";
     //private const string userCollection = "users";
     //private const string choreHistoryCollection = "chore_history";
+    public string ConnectionString { get; set; }
+    public MongoDbDataAccess(string connectionString)
+    {
+        ConnectionString = connectionString;
+    }
 
     public void WriteSale(Sale sale)
     {

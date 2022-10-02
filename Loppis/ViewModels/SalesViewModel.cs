@@ -10,6 +10,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace loppis.ViewModels;
 
@@ -36,7 +38,7 @@ public class SalesViewModel : BindableBase
     private Brush sellerIdBackground;
     private Brush cashierBackground;
     private string cashier;
-    private DataAccessCollection dataAccess = new();
+    private IDataAccessCollection dataAccess;
 
     public bool SellerIdFocused
     {
@@ -71,7 +73,7 @@ public class SalesViewModel : BindableBase
     public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
     public Brush CashierBackground { get => cashierBackground; set => SetProperty(ref cashierBackground, value); }
     public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
-    
+
     private const int NumberOfSalesToShow = 3;
 
     #endregion
@@ -79,7 +81,7 @@ public class SalesViewModel : BindableBase
     #region Construction
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0031:Use null propagation", Justification = "Does not work in this case.")]
-    public SalesViewModel(string testFileName = cDefaultSaveFileName)
+    public SalesViewModel(string testFileName = cDefaultSaveFileName, IDataAccessCollection dataAccessCollection = null)
     {
         CurrentEntry = new SaleEntry();
         ItemList = new ObservableCollection<SaleEntry>();
@@ -103,7 +105,9 @@ public class SalesViewModel : BindableBase
         SaleEntry.CardId = null;
         SaleEntry.BagId = null;
         Cashier = "Säljare";
-        dataAccess.DataAccess.Add(new FileDataAccess(testFileName));
+
+        dataAccess = dataAccessCollection ?? new DataAccessCollection();
+        dataAccess.Add(new FileDataAccess(testFileName));
     }
 
     #endregion
@@ -144,7 +148,7 @@ public class SalesViewModel : BindableBase
         }
     }
 
-        private bool IsCashierNameValid()
+    private bool IsCashierNameValid()
     {
         return Cashier != "Säljare" && Cashier.Length > 0;
     }
@@ -309,6 +313,16 @@ public class SalesViewModel : BindableBase
 
     private void ExecuteLoad()
     {
+        XmlDocument doc = new();
+        doc.Load("./config/settings.xml");
+        {
+            XmlNode node = doc.DocumentElement.SelectSingleNode("//ConnectionString");
+            string connectionString = node?.InnerText ?? "";
+            if (connectionString != string.Empty)
+            {
+                dataAccess.Add(new MongoDbDataAccess(connectionString));
+            }
+        }
         LoadSellerList(cSellerFileName);
     }
 

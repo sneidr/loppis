@@ -4,6 +4,7 @@ namespace LoppisTest;
 
 internal class TestFiles
 {
+    public static string SettingsFile = @".\config\settings.xml";
     public static string SellerFile = @".\sellers.csv";
     public static string TransactionsFile => @".\mytestfile.xml";
 
@@ -26,7 +27,7 @@ internal class TestFiles
         File.WriteAllText(TransactionsFile, contents);
     }
 
-    public static void RemoveConfigFile()
+    public static void RemoveSellerListFile()
     {
         if (File.Exists(SellerFile))
         {
@@ -34,12 +35,29 @@ internal class TestFiles
         }
     }
 
-    public static void SetupConfigFile(string contents)
+    public static void SetupSellerListFile(string contents)
     {
-        RemoveConfigFile();
+        RemoveSellerListFile();
 
         File.Create(SellerFile).Close();
         File.WriteAllText(SellerFile, contents);
+    }
+
+    public static void RemoveSettingsFile()
+    {
+        if (File.Exists(SettingsFile))
+        {
+            File.Delete(SettingsFile);
+        }
+    }
+
+    public static void SetupSettingsFile(string contents)
+    {
+        RemoveSettingsFile();
+
+        Directory.CreateDirectory(@".\config");
+        File.Create(SettingsFile).Close();
+        File.WriteAllText(SettingsFile, $"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n{contents}");
     }
 
     public static void RemoveErrorFiles()

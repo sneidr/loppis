@@ -16,7 +16,7 @@ public class MoveFocus
     [DataRow(999)] // 999 is RoundUp default value
     public void Can_Move_Focus_When_SellerId_Is_Valid(int sellerId)
     {
-        TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
+        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         SalesViewModel vm = new();
         vm.LoadCommand.Execute(null);
@@ -35,7 +35,7 @@ public class MoveFocus
     [DataRow(int.MinValue)]
     public void Cannot_Move_Focus_When_SellerId_Is_Invalid(int sellerId)
     {
-        TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
+        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         SalesViewModel vm = new();
         vm.LoadCommand.Execute(null);
@@ -48,7 +48,7 @@ public class MoveFocus
     [TestMethod]
     public void SellerId_Background_Is_White_When_SellerId_Is_Valid()
     {
-        TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
+        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         SalesViewModel vm = new();
         vm.LoadCommand.Execute(null);
@@ -63,7 +63,7 @@ public class MoveFocus
     [TestMethod]
     public void SellerId_Background_Is_Orange_When_SellerId_Is_Invalid()
     {
-        TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
+        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         SalesViewModel vm = new();
         vm.LoadCommand.Execute(null);
