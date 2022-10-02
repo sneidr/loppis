@@ -9,7 +9,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>; // TODO: Remove
 
 namespace loppis.ViewModels;
 
@@ -161,8 +160,6 @@ public class SalesViewModel : BindableBase
         ItemList.Clear();
         SumTotal = 0;
     }
-
-    // Copies file to new error backup file
 
     #endregion
 
