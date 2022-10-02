@@ -1,4 +1,5 @@
 ﻿using loppis.ViewModels;
+using loppis.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace LoppisTest;

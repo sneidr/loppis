@@ -1,4 +1,5 @@
-﻿using loppis.ViewModels;
+﻿using loppis.Model;
+using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;

@@ -1,4 +1,4 @@
-﻿namespace loppis.ViewModels;
+﻿namespace loppis.Model;
 
 public class Seller
 {
