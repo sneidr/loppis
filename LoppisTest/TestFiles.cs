@@ -4,7 +4,7 @@ namespace LoppisTest;
 
 internal class TestFiles
 {
-    private const string sellerFile = @".\sellers.csv";
+    public static string SellerFile = @".\sellers.csv";
     public static string TransactionsFile => @".\mytestfile.xml";
 
     public static string FirstErrorFile = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error1{Path.GetExtension(TestFiles.TransactionsFile)}";
@@ -28,9 +28,9 @@ internal class TestFiles
 
     public static void RemoveConfigFile()
     {
-        if (File.Exists(sellerFile))
+        if (File.Exists(SellerFile))
         {
-            File.Delete(sellerFile);
+            File.Delete(SellerFile);
         }
     }
 
@@ -38,8 +38,8 @@ internal class TestFiles
     {
         RemoveConfigFile();
 
-        File.Create(sellerFile).Close();
-        File.WriteAllText(sellerFile, contents);
+        File.Create(SellerFile).Close();
+        File.WriteAllText(SellerFile, contents);
     }
 
     public static void RemoveErrorFiles()

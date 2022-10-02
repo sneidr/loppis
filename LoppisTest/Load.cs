@@ -24,7 +24,7 @@ public class Load
             ShutDownFunction = () => { isShutDown = true; },
             MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; }
         };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.AreEqual(0, vm.SellerList.Count);
         Assert.IsTrue(isShutDown);
@@ -37,7 +37,7 @@ public class Load
         TestFiles.SetupConfigFile("1;Firstname LastName\r\n2;John Doe\r\n7;Kasse;78\r\n8;Vykort;15");
 
         SalesViewModel vm = new(TestFiles.TransactionsFile);
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.AreEqual(4, vm.SellerList.Count);
         Assert.AreEqual("John Doe", vm.SellerList[2].Name);
@@ -53,7 +53,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -69,7 +69,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -85,7 +85,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -101,7 +101,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -117,7 +117,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -129,7 +129,7 @@ public class Load
         TestFiles.SetupConfigFile("1;Firstname LastName\r\n8;Vykort;15\r\n11;Kasse;5");
 
         SalesViewModel vm = new(TestFiles.TransactionsFile);
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.AreEqual(3, vm.SellerList.Count);
         Assert.AreEqual(15, vm.SellerList[8].DefaultPrice);
@@ -146,7 +146,7 @@ public class Load
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
 
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -163,7 +163,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -180,7 +180,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -197,7 +197,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -214,7 +214,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);
@@ -231,7 +231,7 @@ public class Load
         bool wasMessageBoxShown = false;
         vm.ShutDownFunction = () => { isShutDown = true; };
         vm.MsgBoxFunction = (string a, string b) => { wasMessageBoxShown = true; return System.Windows.MessageBoxResult.OK; };
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList(TestFiles.SellerFile);
 
         Assert.IsTrue(isShutDown);
         Assert.IsTrue(wasMessageBoxShown);

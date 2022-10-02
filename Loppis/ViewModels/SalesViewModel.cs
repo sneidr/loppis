@@ -2,6 +2,7 @@
 using DataAccess.Model;
 using Prism.Commands;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -89,7 +90,7 @@ public class SalesViewModel : BindableBase
         BagCommand = new DelegateCommand(ExecuteBag, CanExecuteBag);
         CardCommand = new DelegateCommand(ExecuteCard, CanExecuteCard);
         SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
-        LoadCommand = new DelegateCommand(ExecuteLoad, CanExecuteLoad);
+        LoadCommand = new DelegateCommand(ExecuteLoad, () => true);
         UndoCommand = new DelegateCommand<object>(ExecuteUndo, CanExecuteUndo);
         ClearCommand = new DelegateCommand(ExecuteClear, CanExecuteClear);
         EditPreviousSaleCommand = new DelegateCommand<object>(EditPreviousSale, CanEditPreviousSale);
@@ -306,19 +307,20 @@ public class SalesViewModel : BindableBase
 
     #region LoadCommand
 
-    private bool CanExecuteLoad()
+    private void ExecuteLoad()
     {
-        return true;
+        LoadSellerList(cSellerFileName);
     }
 
-    private void ExecuteLoad()
+
+    public void LoadSellerList(string sellerFileName)
     {
         try
         {
             bool bagEntryInFile = false;
             bool cardEntryInFile = false;
             SellerList.Clear();
-            string sellersContent = File.ReadAllText(cSellerFileName);
+            string sellersContent = File.ReadAllText(sellerFileName);
             foreach (string line in sellersContent.Split("\r\n"))
             {
                 string[] a = line.Split(";");
