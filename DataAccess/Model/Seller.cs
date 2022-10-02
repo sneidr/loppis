@@ -1,4 +1,4 @@
-﻿namespace loppis.Model;
+﻿namespace DataAccess.Model;
 
 public class Seller
 {

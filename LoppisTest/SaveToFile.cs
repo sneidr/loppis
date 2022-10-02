@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
+using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>;
 
 namespace LoppisTest;
 

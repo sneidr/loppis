@@ -2,10 +2,13 @@
 using System;
 using System.Xml.Serialization;
 
-namespace loppis.Model;
+namespace DataAccess.Model;
 
 public class SaleEntry : BindableBase, IEquatable<SaleEntry>
 {
+    public const int RoundUpId = 999;
+    public static int? CardId { get; set; }
+    public static int? BagId { get; set; }
 
     public SaleEntry() : this(null, null)
     {
@@ -34,15 +37,15 @@ public class SaleEntry : BindableBase, IEquatable<SaleEntry>
     {
         get
         {
-            if (m_sellerId == loppis.ViewModels.SalesViewModel.CardId)
+            if (m_sellerId == CardId)
             {
                 return "Vykort      ";
             }
-            else if (m_sellerId == loppis.ViewModels.SalesViewModel.BagId)
+            else if (m_sellerId == BagId)
             {
                 return "Kasse       ";
             }
-            else if (m_sellerId == loppis.ViewModels.SalesViewModel.RoundUpId)
+            else if (m_sellerId == RoundUpId)
             {
                 return "Avrundning  ";
             }

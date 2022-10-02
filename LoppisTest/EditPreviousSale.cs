@@ -1,10 +1,10 @@
-﻿using loppis.Model;
+﻿using DataAccess.Model;
 using loppis.ViewModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
+using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>;
 
 namespace LoppisTest;
 

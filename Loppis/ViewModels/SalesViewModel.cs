@@ -1,7 +1,7 @@
-﻿using loppis.Model;
+﻿using DataAccess.DataAccess;
+using DataAccess.Model;
 using Prism.Commands;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
+using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>;
 
 namespace loppis.ViewModels;
 
@@ -73,11 +73,8 @@ public class SalesViewModel : BindableBase
     public Brush CashierBackground { get => cashierBackground; set => SetProperty(ref cashierBackground, value); }
     public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
 
-    public const int RoundUpId = 999;
     private const int NumberOfSalesToShow = 3;
 
-    public static int? CardId { get; set; }
-    public static int? BagId { get; set; }
     #endregion
 
     #region Construction
@@ -104,9 +101,11 @@ public class SalesViewModel : BindableBase
         SellerIdBackground = new SolidColorBrush(Colors.White);
         CashierBackground = new SolidColorBrush(Colors.White);
         SellerIdFocused = true;
-        CardId = null;
-        BagId = null;
+        SaleEntry.CardId = null;
+        SaleEntry.BagId = null;
         Cashier = "Säljare";
+
+        List<IDataAccess> dataAccesses = new() { new FileDataAccess()};
     }
 
     #endregion
@@ -306,7 +305,7 @@ public class SalesViewModel : BindableBase
 
     private bool CanExecuteMove()
     {
-        bool canExecute = CurrentEntry.SellerId != null && (SellerList.ContainsKey(CurrentEntry.SellerId.Value) || CurrentEntry.SellerId.Value == RoundUpId);
+        bool canExecute = CurrentEntry.SellerId != null && (SellerList.ContainsKey(CurrentEntry.SellerId.Value) || CurrentEntry.SellerId.Value == SaleEntry.RoundUpId);
         if (!canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.White)
         {
             ((SolidColorBrush)SellerIdBackground).Color = Colors.Orange;
@@ -332,7 +331,7 @@ public class SalesViewModel : BindableBase
     {
 
         bool canExecute = CurrentEntry.Price != null && CurrentEntry.Price > 0 && CurrentEntry.SellerId != null &&
-            (SellerList.ContainsKey(CurrentEntry.SellerId.Value) || CurrentEntry.SellerId.Value == RoundUpId);
+            (SellerList.ContainsKey(CurrentEntry.SellerId.Value) || CurrentEntry.SellerId.Value == SaleEntry.RoundUpId);
 
         if (!canExecute && ((SolidColorBrush)SellerIdBackground).Color == Colors.White)
         {
@@ -393,7 +392,7 @@ public class SalesViewModel : BindableBase
                 string[] a = line.Split(";");
                 Seller seller;
                 int sellerId = int.Parse(a[0]);
-                if (sellerId == RoundUpId)
+                if (sellerId == SaleEntry.RoundUpId)
                 {
                     throw new System.FormatException($"Id 999 is reserved. Please choose another id for row: {line}");
                 }
@@ -415,12 +414,12 @@ public class SalesViewModel : BindableBase
                 if (seller.Name == "Kasse" && seller.DefaultPrice != null)
                 {
                     bagEntryInFile = true;
-                    BagId = sellerId;
+                    SaleEntry.BagId = sellerId;
                 }
                 if (seller.Name == "Vykort" && seller.DefaultPrice != null)
                 {
                     cardEntryInFile = true;
-                    CardId = sellerId;
+                    SaleEntry.CardId = sellerId;
 
                 }
             }
