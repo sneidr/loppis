@@ -6,6 +6,7 @@ namespace DataAccess.DataAccess;
 public interface IDataAccess
 {
     void WriteSale(Sale sale);
+    void RemoveSale(Sale sale);
 }
 
 public class DataAccessCollection
@@ -15,6 +16,14 @@ public class DataAccessCollection
         foreach(var dataAccess in DataAccess)
         {
             dataAccess.WriteSale(sale);
+        }
+    }
+
+    public void RemoveSale(Sale sale)
+    {
+        foreach( var dataAccess in DataAccess)
+        {
+            dataAccess.RemoveSale(sale);
         }
     }
 

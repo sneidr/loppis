@@ -437,9 +437,7 @@ public class SalesViewModel : BindableBase
 
         UpdateSumTotal();
 
-        SaveList entries = FileDataAccess.ReadFromXmlFile();
-        entries.Remove(sale);
-        FileDataAccess.WriteToXmlFile(entries);
+        dataAccess.RemoveSale(sale);
     }
 
     #endregion

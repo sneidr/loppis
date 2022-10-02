@@ -4,25 +4,30 @@ using MongoDB.Driver;
 namespace DataAccess.DataAccess;
 public class MongoDbDataAccess : IDataAccess
 {
-    private const string connectionString = "";
-    private const string databaseName = "choredb";
-    private const string choreCollection = "chore_chart";
-    private const string userCollection = "users";
-    private const string choreHistoryCollection = "chore_history";
+    //private const string connectionString = "";
+    //private const string databaseName = "choredb";
+    //private const string choreCollection = "chore_chart";
+    //private const string userCollection = "users";
+    //private const string choreHistoryCollection = "chore_history";
 
     public void WriteSale(Sale sale)
     {
         throw new NotImplementedException();
     }
 
-    private IMongoCollection<T> ConnectToMongo<T>(in string collection)
+    public void RemoveSale(Sale sale)
     {
-        var settings = MongoClientSettings.FromConnectionString(connectionString);
-        settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-        var client = new MongoClient(settings);
-        var db = client.GetDatabase(databaseName);
-        return db.GetCollection<T>(collection);
+        throw new NotImplementedException();
     }
+
+    //private IMongoCollection<T> ConnectToMongo<T>(in string collection)
+    //{
+    //    var settings = MongoClientSettings.FromConnectionString(connectionString);
+    //    settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+    //    var client = new MongoClient(settings);
+    //    var db = client.GetDatabase(databaseName);
+    //    return db.GetCollection<T>(collection);
+    //}
 
     //public async Task<List<UserModel>> GetAllUsers()
     //{

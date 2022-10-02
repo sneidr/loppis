@@ -18,6 +18,15 @@ public class FileDataAccess : IDataAccess
         WriteToXmlFile(entries);
     }
 
+    public void RemoveSale(Sale sale)
+    {
+        SaveList entries = ReadFromXmlFile();
+        entries.Remove(sale);
+        WriteToXmlFile(entries);
+
+    }
+
+
     public static void WriteToXmlFile(SaveList entries)
     {
         using var filestream = new FileStream(SaveFileName, FileMode.Truncate);
@@ -79,7 +88,6 @@ public class FileDataAccess : IDataAccess
 
         return Path.Combine(dir, $"{fileName}_error{i}{ext}");
     }
-
 
     public static string SaveFileName { get; set; }
 }
