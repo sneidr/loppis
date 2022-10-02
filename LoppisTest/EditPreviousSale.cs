@@ -74,7 +74,7 @@ public class EditPreviousSale
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
         }
-        Assert.AreEqual(entries.Count, 0);
+        Assert.AreEqual(0, entries.Count);
     }
 
     [TestMethod]

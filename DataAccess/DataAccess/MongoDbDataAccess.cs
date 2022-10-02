@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using DataAccess.Model;
+using MongoDB.Driver;
 
 namespace DataAccess.DataAccess;
 public class MongoDbDataAccess : IDataAccess
@@ -8,7 +9,12 @@ public class MongoDbDataAccess : IDataAccess
     private const string choreCollection = "chore_chart";
     private const string userCollection = "users";
     private const string choreHistoryCollection = "chore_history";
-    
+
+    public void WriteSale(Sale sale)
+    {
+        throw new NotImplementedException();
+    }
+
     private IMongoCollection<T> ConnectToMongo<T>(in string collection)
     {
         var settings = MongoClientSettings.FromConnectionString(connectionString);

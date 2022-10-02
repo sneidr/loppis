@@ -9,8 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>;
+using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>; // TODO: Remove
 
 namespace loppis.ViewModels;
 
@@ -37,6 +36,7 @@ public class SalesViewModel : BindableBase
     private Brush sellerIdBackground;
     private Brush cashierBackground;
     private string cashier;
+    private DataAccessCollection dataAccess = new();
 
     public bool SellerIdFocused
     {
@@ -60,7 +60,6 @@ public class SalesViewModel : BindableBase
             SetProperty(ref priceFocused, value);
         }
     }
-    public string SaveFileName { get; set; }
     public SaleEntry CurrentEntry { get => currentEntry; set => SetProperty(ref currentEntry, value); }
     public int SumTotal { get => sumTotal; set => SetProperty(ref sumTotal, value); }
     public ObservableCollection<SaleEntry> ItemList { get => itemList; set => SetProperty(ref itemList, value); }
@@ -72,16 +71,16 @@ public class SalesViewModel : BindableBase
     public Brush SellerIdBackground { get => sellerIdBackground; set => SetProperty(ref sellerIdBackground, value); }
     public Brush CashierBackground { get => cashierBackground; set => SetProperty(ref cashierBackground, value); }
     public string Cashier { get => cashier; set => SetProperty(ref cashier, value); }
-
+    
     private const int NumberOfSalesToShow = 3;
 
     #endregion
 
     #region Construction
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0031:Use null propagation", Justification = "Does not work in this case.")]
     public SalesViewModel(string testFileName = cDefaultSaveFileName)
     {
-        SaveFileName = testFileName;
         CurrentEntry = new SaleEntry();
         ItemList = new ObservableCollection<SaleEntry>();
         LastSalesList = new();
@@ -104,8 +103,7 @@ public class SalesViewModel : BindableBase
         SaleEntry.CardId = null;
         SaleEntry.BagId = null;
         Cashier = "Säljare";
-
-        List<IDataAccess> dataAccesses = new() { new FileDataAccess()};
+        dataAccess.DataAccess.Add(new FileDataAccess(testFileName));
     }
 
     #endregion
@@ -153,81 +151,18 @@ public class SalesViewModel : BindableBase
 
     private void ExecuteSaveToFile()
     {
-        SaveList entries = ReadFromXmlFile();
         var sale = new Sale(ItemList, Cashier);
-        entries.Add(sale);
         LastSalesList.Insert(0, sale);
         if (LastSalesList.Count > NumberOfSalesToShow)
         {
             LastSalesList.RemoveAt(NumberOfSalesToShow);
         }
-        WriteToXmlFile(entries);
+        dataAccess.WriteSale(sale);
         ItemList.Clear();
         SumTotal = 0;
     }
 
-    private void WriteToXmlFile(SaveList entries)
-    {
-        using var filestream = new FileStream(SaveFileName, FileMode.Truncate);
-        var xmlwriter = new XmlSerializer(typeof(SaveList));
-        xmlwriter.Serialize(filestream, (SaveList)entries);
-    }
-
-    private SaveList ReadFromXmlFile()
-    {
-        var entries = new SaveList();
-        using (var filestream = new FileStream(SaveFileName, FileMode.OpenOrCreate))
-        {
-            if (filestream.Length > 0)
-            {
-                var xmlreader = new XmlSerializer(typeof(SaveList));
-                try
-                {
-                    entries = (SaveList)xmlreader.Deserialize(filestream);
-                }
-                catch (System.InvalidOperationException)
-                {
-                    //TODO: Error bar at the top
-                    CopyFileToErrorBackup();
-                }
-            }
-        }
-
-        return entries;
-    }
-
     // Copies file to new error backup file
-    private void CopyFileToErrorBackup()
-    {
-        int i = NextAvailableErrorFileNumber();
-        File.Copy(SaveFileName, GetErrorFileName(i));
-    }
-
-    private int NextAvailableErrorFileNumber()
-    {
-        int i = 0;
-        while (File.Exists(path: GetErrorFileName(++i)))
-        {
-            if (i > 100)
-            {
-                // Defensive
-                // Should never happen
-                throw new IOException("Too many error files!");
-            }
-        }
-
-        return i;
-    }
-
-    // Adds "_error<num> to cSaveFileName
-    private string GetErrorFileName(int i)
-    {
-        string dir = Path.GetDirectoryName(SaveFileName);
-        string fileName = Path.GetFileNameWithoutExtension(SaveFileName);
-        string ext = Path.GetExtension(SaveFileName);
-
-        return Path.Combine(dir, $"{fileName}_error{i}{ext}");
-    }
 
     #endregion
 
@@ -502,9 +437,9 @@ public class SalesViewModel : BindableBase
 
         UpdateSumTotal();
 
-        SaveList entries = ReadFromXmlFile();
+        SaveList entries = FileDataAccess.ReadFromXmlFile();
         entries.Remove(sale);
-        WriteToXmlFile(entries);
+        FileDataAccess.WriteToXmlFile(entries);
     }
 
     #endregion
