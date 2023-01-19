@@ -15,7 +15,7 @@ CreateMailText(sellers);
 MailList ReadAddressesFromFile()
 {
     MailList addresses = new();
-    foreach (string line in File.ReadAllLines(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\mailaddresser.csv"))
+    foreach (string line in File.ReadAllLines(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\HT22\mailaddresser.csv"))
     {
         var data = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         if (data.Length < 2)
@@ -32,7 +32,7 @@ void CreateMailText(SellerList sellers)
 {
     foreach (var kv in sellers)
     {
-        string text = File.ReadAllText(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\mailutkast.txt");
+        string text = File.ReadAllText(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\HT22\mailutkast.txt");
         var seller = kv.Value;
         text = text.Replace("<Utbetalt>", $"{seller.ToSeller}");
         text = text.Replace("<EFI-fadder>", $"{seller.ToEFI}");
@@ -49,7 +49,7 @@ void CreateMailText(SellerList sellers)
         {
             filename = seller.MailAddress;
         }
-        var newFileName = $@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\{filename}";
+        var newFileName = $@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\HT22\{filename}";
         File.WriteAllText(newFileName, text);
     }
 }
@@ -57,7 +57,7 @@ void CreateMailText(SellerList sellers)
 SellerList ReadSellersFromFile()
 {
     SellerList sellers = new();
-    foreach (string line in File.ReadAllLines(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\sellers.csv"))
+    foreach (string line in File.ReadAllLines(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\HT22\sellers.csv"))
     {
         var data = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         if (data.Length < 2)
@@ -71,9 +71,9 @@ SellerList ReadSellersFromFile()
 
 void PopulateSellersWithSalesData(ref SellerList sellers, MailList addresses)
 {
-    foreach (string line in File.ReadAllLines(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\alltransactions_VT2022.csv"))
+    foreach (string line in File.ReadAllLines(@"C:\Users\eider\Source\Repos\loppis\LoppisMail\Data\HT22\alltransactions.csv"))
     {
-        var data = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        var data = line.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         if (data.Length < 4)
         {
             throw new Exception("Error!");

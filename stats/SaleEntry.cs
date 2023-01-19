@@ -20,7 +20,7 @@ namespace stats
         {
             foreach(SaleEntry e in Entries)
             {
-                sw.WriteLine($"{Cashier},{Timestamp},{e.SellerId},{e.Price}");
+                sw.WriteLine($"{Cashier};{Timestamp};{e.SellerId};{e.Price}");
             }
         }
     }
