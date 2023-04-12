@@ -19,7 +19,7 @@ namespace loppis.Model
 
         public void Clear()
         {
-            SellerId = null;
+            SellerIdText = string.Empty;
             Price = null;
         }
 
@@ -29,6 +29,55 @@ namespace loppis.Model
         public int? SellerId { get => m_sellerId; set { SetProperty(ref m_sellerId, value); } }
         public int? Price { get => m_price; set { SetProperty(ref m_price, value); } }
 
+        [XmlIgnore]
+        public string? SellerIdText 
+        { 
+            get 
+            { 
+                if( m_sellerId == null)
+                {
+                    return string.Empty;
+                }
+                else if(m_sellerId == 500)
+                {
+                    return "00";
+                }
+                else if(m_sellerId == 600)
+                {
+                    return "000";
+                }
+                else
+                {
+                    return m_sellerId.ToString();
+                }
+            } 
+            set 
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    SetProperty(ref m_sellerId, null);
+                    return;
+                }
+                else if (value == "00")
+                {
+                    SetProperty(ref m_sellerId, 500);
+                    return;
+                }
+                else if (value == "000")
+                {
+                    SetProperty(ref m_sellerId, 600);
+                    return;
+                }
+                else
+                {
+                    bool ok = int.TryParse(value, out int temp);
+                    if (!ok) return;
+
+                    SetProperty(ref m_sellerId, temp);
+                }
+            } 
+        }
+    
         [XmlIgnoreAttribute]
         public string SellerIdListText
         {
@@ -45,6 +94,14 @@ namespace loppis.Model
                 else if (m_sellerId == loppis.ViewModels.SalesViewModel.RoundUpId)
                 {
                     return "Avrundning  ";
+                }
+                else if (m_sellerId == 500)
+                {
+                    return "Säljare:  00";
+                }
+                else if (m_sellerId == 600)
+                {
+                    return "Säljare: 000";
                 }
                 else
                 {

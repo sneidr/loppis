@@ -234,7 +234,7 @@ namespace loppis.ViewModels
         private void ExecuteCard()
         {
             // Default values
-            CurrentEntry.SellerId = 600;
+            CurrentEntry.SellerIdText = "400";
             CurrentEntry.Price = 15;
 
             foreach (var seller in SellerList)
@@ -261,7 +261,7 @@ namespace loppis.ViewModels
         private void ExecuteBag()
         {
             // Default values
-            CurrentEntry.SellerId = 500;
+            CurrentEntry.SellerIdText = "300";
             CurrentEntry.Price = 5;
 
             foreach (var seller in SellerList)
@@ -312,7 +312,7 @@ namespace loppis.ViewModels
 
         private void ExecuteMove()
         {
-            SellerIdFocused = false;
+            ClearFocus();
             PriceFocused = true;
         }
 
@@ -357,9 +357,15 @@ namespace loppis.ViewModels
             SumTotal = total != null ? (int)total : 0;
         }
 
-        private void SetFocusToSellerId()
+        private void ClearFocus()
         {
             PriceFocused = false;
+            SellerIdFocused = false;
+        }
+
+        private void SetFocusToSellerId()
+        {
+            ClearFocus();
             SellerIdFocused = true;
         }
 
@@ -416,6 +422,7 @@ namespace loppis.ViewModels
 
                     }
                 }
+
                 if (!bagEntryInFile)
                 {
                     throw new System.FormatException("File must contain entry for \"Kasse\" with default price.");
