@@ -1,15 +1,14 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Xml.Serialization;
 
-namespace DataAccess.Model;
+namespace loppis.Model;
 
 public class Sale : IEquatable<Sale>
 {
     [XmlIgnore]
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
 
     List<SaleEntry> entries = new();

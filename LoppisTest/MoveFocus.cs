@@ -16,10 +16,8 @@ public class MoveFocus
     [DataRow(999)] // 999 is RoundUp default value
     public void Can_Move_Focus_When_SellerId_Is_Valid(int sellerId)
     {
-        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
-
         SalesViewModel vm = new();
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         vm.CurrentEntry.Price = 62;
         vm.CurrentEntry.SellerId = sellerId;
@@ -35,10 +33,8 @@ public class MoveFocus
     [DataRow(int.MinValue)]
     public void Cannot_Move_Focus_When_SellerId_Is_Invalid(int sellerId)
     {
-        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
-
         SalesViewModel vm = new();
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         vm.CurrentEntry.Price = 62;
         vm.CurrentEntry.SellerId = sellerId;
@@ -48,10 +44,8 @@ public class MoveFocus
     [TestMethod]
     public void SellerId_Background_Is_White_When_SellerId_Is_Valid()
     {
-        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
-
         SalesViewModel vm = new();
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         vm.CurrentEntry.Price = 62;
         vm.CurrentEntry.SellerId = 7;
@@ -63,10 +57,8 @@ public class MoveFocus
     [TestMethod]
     public void SellerId_Background_Is_Orange_When_SellerId_Is_Invalid()
     {
-        TestFiles.SetupSellerListFile("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
-
         SalesViewModel vm = new();
-        vm.LoadCommand.Execute(null);
+        vm.LoadSellerList("1;Firstname LastName\r\n2;John Doe\r\n7;Hej Svej\r\n8;Kasse;1\r\n9;Vykort;2");
 
         vm.CurrentEntry.Price = 62;
         vm.CurrentEntry.SellerId = 12;

@@ -1,16 +1,12 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using System;
 using System.Xml.Serialization;
 
-namespace DataAccess.Model;
+namespace loppis.Model;
 
 public class SaleEntry : BindableBase, IEquatable<SaleEntry>
 {
     [XmlIgnore]
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
     public string Id { get; set; }
 
     public const int RoundUpId = 999;

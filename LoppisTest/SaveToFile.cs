@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>;
+using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
 
 namespace LoppisTest;
 
@@ -15,11 +15,12 @@ public class SaveToFile
     [TestMethod]
     public void TestSaveToFile_CanExecute()
     {
-        SalesViewModel vm = new(TestFiles.TransactionsFile);
+        var testFiles = new TestFiles();
+        SalesViewModel vm = new(testFiles.TransactionsFile);
         Assert.AreEqual(Colors.White, ((SolidColorBrush)vm.CashierBackground).Color);
         Assert.IsFalse(vm.SaveToFileCommand.CanExecute(null));
 
-        Assert.AreEqual(vm.Cashier, "Säljare");
+        Assert.AreEqual("Säljare", vm.Cashier);
         vm.CurrentEntry.SellerId = 12;
         vm.CurrentEntry.Price = 80;
         vm.EnterSale();
@@ -38,9 +39,10 @@ public class SaveToFile
     [TestMethod]
     public void TestSaveToFile_Execute()
     {
-        TestFiles.RemoveTransactionsFile();
+        var testFiles = new TestFiles();
+        testFiles.RemoveTransactionsFile();
 
-        SalesViewModel vm = new(TestFiles.TransactionsFile)
+        SalesViewModel vm = new(testFiles.TransactionsFile)
         {
             Cashier = "Lisa"
         };
@@ -60,31 +62,32 @@ public class SaveToFile
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
 
-        var entries = new SaveList();
-        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
+        SaveList entries;
+        using (var filestream = new FileStream(testFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
         }
 
-        Assert.AreEqual(entries[0][0].SellerId, 15);
-        Assert.AreEqual(entries[0][0].Price, 90);
-        Assert.AreEqual(entries[0][1].SellerId, 12);
-        Assert.AreEqual(entries[0][1].Price, 80);
-        Assert.AreEqual(entries[1][0].SellerId, 20);
-        Assert.AreEqual(entries[1][0].Price, 100);
-        Assert.AreEqual(entries[0].Cashier, "Lisa");
-        Assert.AreEqual(entries[1].Cashier, "Lisa");
+        Assert.AreEqual(15, entries[0][0].SellerId);
+        Assert.AreEqual(90, entries[0][0].Price);
+        Assert.AreEqual(12, entries[0][1].SellerId);
+        Assert.AreEqual(80, entries[0][1].Price);
+        Assert.AreEqual(20, entries[1][0].SellerId);
+        Assert.AreEqual(100, entries[1][0].Price);
+        Assert.AreEqual("Lisa",entries[0].Cashier);
+        Assert.AreEqual("Lisa",entries[1].Cashier);
         Assert.AreNotEqual(entries[0].Timestamp, entries[1].Timestamp);
-        Assert.AreEqual(vm.SumTotal, 0);
+        Assert.AreEqual(0, vm.SumTotal);
     }
 
     [TestMethod]
     public void TestSaveToFile_Execute_FileExists()
     {
-        TestFiles.SetupTransactionsFile("");
+        var testFiles = new TestFiles();
+        testFiles.SetupTransactionsFile("");
 
-        SalesViewModel vm = new(TestFiles.TransactionsFile)
+        SalesViewModel vm = new(testFiles.TransactionsFile)
         {
             Cashier = "Simon"
         };
@@ -94,24 +97,25 @@ public class SaveToFile
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
 
-        var entries = new SaveList();
-        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
+        SaveList entries;
+        using (var filestream = new FileStream(testFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
         }
 
-        Assert.AreEqual(entries[0][0].SellerId, 12);
-        Assert.AreEqual(entries[0][0].Price, 80);
+        Assert.AreEqual(12, entries[0][0].SellerId);
+        Assert.AreEqual(80, entries[0][0].Price);
     }
 
     [TestMethod]
     public void TestSaveToFile_Execute_FileWrongFormat()
     {
-        TestFiles.SetupTransactionsFile("ErrorText");
-        TestFiles.RemoveErrorFiles();
+        var testFiles = new TestFiles();
+        testFiles.SetupTransactionsFile("ErrorText");
+        testFiles.RemoveErrorFiles();
 
-        SalesViewModel vm = new(TestFiles.TransactionsFile)
+        SalesViewModel vm = new(testFiles.TransactionsFile)
         {
             Cashier = "Simon"
         };
@@ -122,21 +126,21 @@ public class SaveToFile
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
 
-        var entries = new SaveList();
-        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
+        SaveList entries;
+        using (var filestream = new FileStream(testFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
         }
 
-        Assert.AreEqual(entries[0][0].SellerId, 12);
-        Assert.AreEqual(entries[0][0].Price, 80);
+        Assert.AreEqual(12, entries[0][0].SellerId);
+        Assert.AreEqual(80, entries[0][0].Price);
 
-        Assert.IsTrue(File.Exists(TestFiles.FirstErrorFile));
-        Assert.IsFalse(File.Exists(TestFiles.SeccondErrorFile));
+        Assert.IsTrue(File.Exists(testFiles.FirstErrorFile));
+        Assert.IsFalse(File.Exists(testFiles.SeccondErrorFile));
 
-        File.Delete(TestFiles.TransactionsFile);
-        File.Copy(TestFiles.FirstErrorFile, TestFiles.TransactionsFile);
+        File.Delete(testFiles.TransactionsFile);
+        File.Copy(testFiles.FirstErrorFile, testFiles.TransactionsFile);
 
         vm.CurrentEntry.SellerId = 12;
         vm.CurrentEntry.Price = 80;
@@ -144,26 +148,27 @@ public class SaveToFile
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
 
-        entries = new SaveList();
-        using (var filestream = new FileStream(TestFiles.TransactionsFile, FileMode.Open))
+        entries.Clear();
+        using (var filestream = new FileStream(testFiles.TransactionsFile, FileMode.Open))
         {
             var xmlreader = new XmlSerializer(typeof(SaveList));
             entries = (SaveList)xmlreader.Deserialize(filestream);
         }
 
-        Assert.AreEqual(entries[0][0].SellerId, 12);
-        Assert.AreEqual(entries[0][0].Price, 80);
+        Assert.AreEqual(12, entries[0][0].SellerId);
+        Assert.AreEqual(80, entries[0][0].Price);
 
-        Assert.IsTrue(File.Exists(TestFiles.SeccondErrorFile));
+        Assert.IsTrue(File.Exists(testFiles.SeccondErrorFile));
     }
 
     [TestMethod]
-    [Ignore]
+    [Ignore] // Takes too long to run
     public void TestSaveToFile_Execute_Performance()
     {
-        TestFiles.SetupTransactionsFile("");
+        var testFiles = new TestFiles();
+        testFiles.SetupTransactionsFile("");
 
-        SalesViewModel vm = new(TestFiles.TransactionsFile);
+        SalesViewModel vm = new(testFiles.TransactionsFile);
 
         var stopwatch = new Stopwatch();
         for (int i = 1; i <= 250; i++)
@@ -190,10 +195,11 @@ public class SaveToFile
     [TestMethod]
     public void TestSaveToFile_Execute_LastEntriesInList()
     {
-        TestFiles.RemoveTransactionsFile();
+        var testFiles = new TestFiles();
+        testFiles.RemoveTransactionsFile();
 
 
-        SalesViewModel vm = new(TestFiles.TransactionsFile)
+        SalesViewModel vm = new(testFiles.TransactionsFile)
         {
             Cashier = "Lisa"
         };
@@ -203,7 +209,7 @@ public class SaveToFile
         vm.EnterSale();
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
-        Assert.AreEqual(vm.LastSalesList[0].SumTotal, 80);
+        Assert.AreEqual(80, vm.LastSalesList[0].SumTotal);
 
 
         vm.CurrentEntry.SellerId = 15;
@@ -211,26 +217,26 @@ public class SaveToFile
         vm.EnterSale();
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
-        Assert.AreEqual(vm.LastSalesList[0].SumTotal, 90);
-        Assert.AreEqual(vm.LastSalesList[1].SumTotal, 80);
+        Assert.AreEqual(90, vm.LastSalesList[0].SumTotal);
+        Assert.AreEqual(80, vm.LastSalesList[1].SumTotal);
 
         vm.CurrentEntry.SellerId = 20;
         vm.CurrentEntry.Price = 100;
         vm.EnterSale();
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
-        Assert.AreEqual(vm.LastSalesList[0].SumTotal, 100);
-        Assert.AreEqual(vm.LastSalesList[1].SumTotal, 90);
-        Assert.AreEqual(vm.LastSalesList[2].SumTotal, 80);
+        Assert.AreEqual(100, vm.LastSalesList[0].SumTotal);
+        Assert.AreEqual(90, vm.LastSalesList[1].SumTotal);
+        Assert.AreEqual(80, vm.LastSalesList[2].SumTotal);
 
         vm.CurrentEntry.SellerId = 20;
         vm.CurrentEntry.Price = 110;
         vm.EnterSale();
         Assert.IsTrue(vm.SaveToFileCommand.CanExecute(null));
         vm.SaveToFileCommand.Execute(null);
-        Assert.AreEqual(vm.LastSalesList[0].SumTotal, 110);
-        Assert.AreEqual(vm.LastSalesList[1].SumTotal, 100);
-        Assert.AreEqual(vm.LastSalesList[2].SumTotal, 90);
-        Assert.AreEqual(vm.LastSalesList.Count, 3);
+        Assert.AreEqual(110, vm.LastSalesList[0].SumTotal);
+        Assert.AreEqual(100, vm.LastSalesList[1].SumTotal);
+        Assert.AreEqual(90, vm.LastSalesList[2].SumTotal);
+        Assert.AreEqual(3, vm.LastSalesList.Count);
     }
 }

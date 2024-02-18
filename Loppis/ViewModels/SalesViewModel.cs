@@ -1,6 +1,4 @@
-﻿using DataAccess.DataAccess;
-using DataAccess.Model;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
@@ -11,8 +9,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
-using System.Xml.Linq;
-
+using loppis.Model;
+using loppis.DataAccess;
 namespace loppis.ViewModels;
 
 public delegate void ShutDownDelegate();
@@ -23,7 +21,7 @@ public class SalesViewModel : BindableBase
     #region Constants
 
     private const string cDefaultSaveFileName = @".\transactions.xml";
-    private const string cSellerFileName = @".\sellers.csv";
+    public const string cSellerFileName = @".\sellers.csv";
 
     #endregion
 
@@ -38,7 +36,7 @@ public class SalesViewModel : BindableBase
     private Brush sellerIdBackground;
     private Brush cashierBackground;
     private string cashier;
-    private IDataAccessCollection dataAccess;
+    private readonly FileDataAccess dataAccess;
 
     public bool SellerIdFocused
     {
@@ -81,7 +79,7 @@ public class SalesViewModel : BindableBase
     #region Construction
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0031:Use null propagation", Justification = "Does not work in this case.")]
-    public SalesViewModel(string testFileName = cDefaultSaveFileName, IDataAccessCollection dataAccessCollection = null)
+    public SalesViewModel(string testFileName = cDefaultSaveFileName)
     {
         CurrentEntry = new SaleEntry();
         ItemList = new ObservableCollection<SaleEntry>();
@@ -106,8 +104,7 @@ public class SalesViewModel : BindableBase
         SaleEntry.BagId = null;
         Cashier = "Säljare";
 
-        dataAccess = dataAccessCollection ?? new DataAccessCollection();
-        dataAccess.Add(new FileDataAccess(testFileName));
+        dataAccess = new FileDataAccess(testFileName);
     }
 
     #endregion
@@ -313,37 +310,26 @@ public class SalesViewModel : BindableBase
 
     private void ExecuteLoad()
     {
-        XmlDocument doc = new();
-        doc.Load("./config/settings.xml");
+        try
         {
-            XmlNode node = doc.DocumentElement.SelectSingleNode("//DBConfig");
-            if(node != null)
-            {
-                var dbUser = node?.Attributes["User"].Value ?? String.Empty;
-                var dbPassword = node?.Attributes["Password"].Value ?? String.Empty;
-
-                if(!string.IsNullOrEmpty(dbUser) && !string.IsNullOrEmpty(dbPassword))
-                {
-                    string connectionString = $"mongodb+srv://{dbUser}:{dbPassword}@cluster0.xuvri.mongodb.net/?retryWrites=true&w=majority";
-                    if (connectionString != string.Empty)
-                    {
-                        dataAccess.Add(new MongoDbDataAccess(connectionString));
-                    }
-                }
-            }
+            string sellersContent = File.ReadAllText(cSellerFileName);
+            LoadSellerList(sellersContent);
         }
-        LoadSellerList(cSellerFileName);
+        catch (FileNotFoundException ex)
+        {
+            MsgBoxFunction(ex.Message, "Error!");
+            ShutDownFunction();
+        }
     }
 
-
-    public void LoadSellerList(string sellerFileName)
+    public void LoadSellerList(string sellersContent)
     {
         try
         {
             bool bagEntryInFile = false;
             bool cardEntryInFile = false;
             SellerList.Clear();
-            string sellersContent = File.ReadAllText(sellerFileName);
+
             foreach (string line in sellersContent.Split("\r\n"))
             {
                 string[] a = line.Split(";");
@@ -388,11 +374,6 @@ public class SalesViewModel : BindableBase
             {
                 throw new System.FormatException("File must contain entry for \"Vykort\" with default price.");
             }
-        }
-        catch (FileNotFoundException ex)
-        {
-            MsgBoxFunction(ex.Message, "Error!");
-            ShutDownFunction();
         }
         catch (System.FormatException ex)
         {

@@ -4,14 +4,18 @@ namespace LoppisTest;
 
 internal class TestFiles
 {
-    public static string SettingsFile = @".\config\settings.xml";
-    public static string SellerFile = @".\sellers.csv";
-    public static string TransactionsFile => @".\mytestfile.xml";
+    public string TransactionsFile = GenerateUniqueTestFileName();
+    public static int count = 0;
+    private static string GenerateUniqueTestFileName()
+    {
 
-    public static string FirstErrorFile = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error1{Path.GetExtension(TestFiles.TransactionsFile)}";
-    public static string SeccondErrorFile = $"{Path.GetFileNameWithoutExtension(TestFiles.TransactionsFile)}_error2{Path.GetExtension(TestFiles.TransactionsFile)}";
+        return $@".\mytestfile_{count++}.xml";
+    }
 
-    public static void RemoveTransactionsFile()
+    public string FirstErrorFile => $"{Path.GetFileNameWithoutExtension(TransactionsFile)}_error1{Path.GetExtension(TransactionsFile)}";
+    public string SeccondErrorFile => $"{Path.GetFileNameWithoutExtension(TransactionsFile)}_error2{Path.GetExtension(TransactionsFile)}";
+
+    public void RemoveTransactionsFile()
     {
         if (File.Exists(TransactionsFile))
         {
@@ -19,7 +23,7 @@ internal class TestFiles
         }
     }
 
-    public static void SetupTransactionsFile(string contents)
+    public void SetupTransactionsFile(string contents)
     {
         RemoveTransactionsFile();
 
@@ -27,40 +31,7 @@ internal class TestFiles
         File.WriteAllText(TransactionsFile, contents);
     }
 
-    public static void RemoveSellerListFile()
-    {
-        if (File.Exists(SellerFile))
-        {
-            File.Delete(SellerFile);
-        }
-    }
-
-    public static void SetupSellerListFile(string contents)
-    {
-        RemoveSellerListFile();
-
-        File.Create(SellerFile).Close();
-        File.WriteAllText(SellerFile, contents);
-    }
-
-    public static void RemoveSettingsFile()
-    {
-        if (File.Exists(SettingsFile))
-        {
-            File.Delete(SettingsFile);
-        }
-    }
-
-    public static void SetupSettingsFile(string contents)
-    {
-        RemoveSettingsFile();
-
-        Directory.CreateDirectory(@".\config");
-        File.Create(SettingsFile).Close();
-        File.WriteAllText(SettingsFile, $"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n{contents}");
-    }
-
-    public static void RemoveErrorFiles()
+    public void RemoveErrorFiles()
     {
         if (File.Exists(FirstErrorFile))
         {

@@ -1,35 +1,29 @@
-﻿using DataAccess.Model;
+﻿using loppis.Model;
+using System.IO;
 using System.Xml.Serialization;
-using SaveList = System.Collections.Generic.List<DataAccess.Model.Sale>;
+using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
 
-namespace DataAccess.DataAccess;
+namespace loppis.DataAccess;
 
-public class FileDataAccess : IDataAccess
+public class FileDataAccess
 {
     public FileDataAccess(string fileName)
     {
         SaveFileName = fileName;
     }
 
-    public Task WriteSale(Sale sale)
+    public void WriteSale(Sale sale)
     {
-        return Task.Run(() =>
-        {
-            SaveList entries = ReadFromXmlFile();
-            entries.Add(sale);
-            WriteToXmlFile(entries);
-        });
+        SaveList entries = ReadFromXmlFile();
+        entries.Add(sale);
+        WriteToXmlFile(entries);
     }
 
-    public Task RemoveSale(Sale sale)
+    public void RemoveSale(Sale sale)
     {
-        return Task.Run(() =>
-        {
-            SaveList entries = ReadFromXmlFile();
-            entries.Remove(sale);
-            WriteToXmlFile(entries);
-        });
-
+        SaveList entries = ReadFromXmlFile();
+        entries.Remove(sale);
+        WriteToXmlFile(entries);
     }
 
 
@@ -37,7 +31,7 @@ public class FileDataAccess : IDataAccess
     {
         using var filestream = new FileStream(SaveFileName, FileMode.Truncate);
         var xmlwriter = new XmlSerializer(typeof(SaveList));
-        xmlwriter.Serialize(filestream, (SaveList)entries);
+        xmlwriter.Serialize(filestream, entries);
     }
 
     public static SaveList ReadFromXmlFile()
