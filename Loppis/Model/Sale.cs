@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.Serialization;
 
 namespace loppis.Model;
 
-public class Sale : IEquatable<Sale>
+public sealed class Sale : IEquatable<Sale>
 {
-    [XmlIgnore]
-    public string Id { get; set; }
-
-    List<SaleEntry> entries = new();
     public string Cashier { get; set; }
     public DateTime Timestamp { get; set; }
     public string TimestampString
@@ -21,13 +16,13 @@ public class Sale : IEquatable<Sale>
             return Timestamp.ToShortTimeString();
         }
     }
-    public List<SaleEntry> Entries { get => entries; set => entries = value; }
+    public List<SaleEntry> Entries { get; private set; } = [];
     public int SumTotal => Entries.Sum((x) => x.Price.GetValueOrDefault());
 
     public SaleEntry this[int i]
     {
-        get { return entries[i]; }
-        set { entries[i] = value; }
+        get { return Entries[i]; }
+        set { Entries[i] = value; }
     }
     public Sale()
     {
@@ -46,5 +41,21 @@ public class Sale : IEquatable<Sale>
     public bool Equals(Sale other)
     {
         return Cashier == other.Cashier && Timestamp == other.Timestamp && Entries.SequenceEqual(other.Entries);
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as Sale);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 27;
+            hash = (13 * hash) + Cashier.GetHashCode();
+            hash = (13 * hash + Timestamp.GetHashCode());
+            return hash;
+        }
     }
 }
