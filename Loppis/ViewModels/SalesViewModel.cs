@@ -1,6 +1,5 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -8,7 +7,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Xml;
 using loppis.Model;
 using loppis.DataAccess;
 namespace loppis.ViewModels;
@@ -78,23 +76,22 @@ public class SalesViewModel : BindableBase
 
     #region Construction
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0031:Use null propagation", Justification = "Does not work in this case.")]
     public SalesViewModel(string testFileName = cDefaultSaveFileName)
     {
         CurrentEntry = new SaleEntry();
-        ItemList = new ObservableCollection<SaleEntry>();
-        LastSalesList = new();
+        ItemList = [];
+        LastSalesList = [];
         EnterSaleCommand = new DelegateCommand(ExecuteEntry, CanExecuteEntry);
         MoveFocusCommand = new DelegateCommand(ExecuteMove, CanExecuteMove);
         RoundUpCommand = new DelegateCommand(ExecuteRoundUp, CanExecuteRoundUp);
-        BagCommand = new DelegateCommand(ExecuteBag, CanExecuteBag);
-        CardCommand = new DelegateCommand(ExecuteCard, CanExecuteCard);
+        BagCommand = new DelegateCommand(ExecuteBag, () => true);
+        CardCommand = new DelegateCommand(ExecuteCard, ()=>true);
         SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
         LoadCommand = new DelegateCommand(ExecuteLoad, () => true);
         UndoCommand = new DelegateCommand<object>(ExecuteUndo, CanExecuteUndo);
         ClearCommand = new DelegateCommand(ExecuteClear, CanExecuteClear);
         EditPreviousSaleCommand = new DelegateCommand<object>(EditPreviousSale, CanEditPreviousSale);
-        SellerList = new Dictionary<int, Seller>();
+        SellerList = [];
         ShutDownFunction = Application.Current != null ? Application.Current.Shutdown : null;
         MsgBoxFunction = MessageBox.Show;
         SellerIdBackground = new SolidColorBrush(Colors.White);
@@ -167,11 +164,6 @@ public class SalesViewModel : BindableBase
 
     #region Card Command
 
-    private bool CanExecuteCard()
-    {
-        return true;
-    }
-
     private void ExecuteCard()
     {
         // Default values
@@ -193,11 +185,6 @@ public class SalesViewModel : BindableBase
     #endregion
 
     #region Bag Command
-
-    private bool CanExecuteBag()
-    {
-        return true;
-    }
 
     private void ExecuteBag()
     {
