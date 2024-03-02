@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace loppis.Model;
 
-public class SaleEntry : BindableBase, IEquatable<SaleEntry>
+public sealed class SaleEntry(int? id, int? price) : BindableBase, IEquatable<SaleEntry>
 {
     [XmlIgnore]
     public string Id { get; set; }
@@ -17,44 +17,35 @@ public class SaleEntry : BindableBase, IEquatable<SaleEntry>
     {
     }
 
-    public SaleEntry(int? id, int? price)
-    {
-        m_sellerId = id;
-        m_price = price;
-    }
-
     public void Clear()
     {
         SellerId = null;
         Price = null;
     }
 
-    private int? m_sellerId;
-    private int? m_price;
-
-    public int? SellerId { get => m_sellerId; set { SetProperty(ref m_sellerId, value); } }
-    public int? Price { get => m_price; set { SetProperty(ref m_price, value); } }
+    public int? SellerId { get => id; set { SetProperty(ref id, value); } }
+    public int? Price { get => price; set { SetProperty(ref price, value); } }
 
     [XmlIgnoreAttribute]
     public string SellerIdListText
     {
         get
         {
-            if (m_sellerId == CardId)
+            if (id == CardId)
             {
                 return "Vykort      ";
             }
-            else if (m_sellerId == BagId)
+            else if (id == BagId)
             {
                 return "Kasse       ";
             }
-            else if (m_sellerId == RoundUpId)
+            else if (id == RoundUpId)
             {
                 return "Avrundning  ";
             }
             else
             {
-                return $"Säljare: {m_sellerId,3}";
+                return $"Säljare: {id,3}";
             }
         }
     }
@@ -64,7 +55,7 @@ public class SaleEntry : BindableBase, IEquatable<SaleEntry>
     {
         get
         {
-            string text = string.Format("{0,3}", m_price);
+            string text = string.Format("{0,3}", price);
             return text;
         }
     }
@@ -74,12 +65,28 @@ public class SaleEntry : BindableBase, IEquatable<SaleEntry>
         if (other == null)
         { return false; }
 
-        if (m_sellerId == other.SellerId && m_price == other.Price)
+        if (id == other.SellerId && price == other.Price)
         { return true; }
         else
         {
             return false;
         }
 
+    }
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as SaleEntry);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 27;
+            hash = (13 * hash) + SellerId.GetHashCode();
+            hash = (13 * hash + Price.GetHashCode());
+            return hash;
+        }
     }
 }

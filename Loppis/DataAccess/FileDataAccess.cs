@@ -5,13 +5,8 @@ using SaveList = System.Collections.Generic.List<loppis.Model.Sale>;
 
 namespace loppis.DataAccess;
 
-public class FileDataAccess
+public class FileDataAccess(string fileName)
 {
-    public FileDataAccess(string fileName)
-    {
-        SaveFileName = fileName;
-    }
-
     public void WriteSale(Sale sale)
     {
         SaveList entries = ReadFromXmlFile();
@@ -27,14 +22,14 @@ public class FileDataAccess
     }
 
 
-    public static void WriteToXmlFile(SaveList entries)
+    public void WriteToXmlFile(SaveList entries)
     {
         using var filestream = new FileStream(SaveFileName, FileMode.Truncate);
         var xmlwriter = new XmlSerializer(typeof(SaveList));
         xmlwriter.Serialize(filestream, entries);
     }
 
-    public static SaveList ReadFromXmlFile()
+    public SaveList ReadFromXmlFile()
     {
         var entries = new SaveList();
         using (var filestream = new FileStream(SaveFileName, FileMode.OpenOrCreate))
@@ -48,7 +43,6 @@ public class FileDataAccess
                 }
                 catch (System.InvalidOperationException)
                 {
-                    //TODO: Error bar at the top
                     CopyFileToErrorBackup();
                 }
             }
@@ -57,13 +51,13 @@ public class FileDataAccess
         return entries;
     }
 
-    private static void CopyFileToErrorBackup()
+    private void CopyFileToErrorBackup()
     {
         int i = NextAvailableErrorFileNumber();
         File.Copy(SaveFileName, GetErrorFileName(i));
     }
 
-    private static int NextAvailableErrorFileNumber()
+    private int NextAvailableErrorFileNumber()
     {
         int i = 0;
         while (File.Exists(path: GetErrorFileName(++i)))
@@ -80,14 +74,14 @@ public class FileDataAccess
     }
 
     // Adds "_error<num> to cSaveFileName
-    private static string GetErrorFileName(int i)
+    private string GetErrorFileName(int i)
     {
         string dir = Path.GetDirectoryName(SaveFileName);
-        string fileName = Path.GetFileNameWithoutExtension(SaveFileName);
+        string fileNameWoExt = Path.GetFileNameWithoutExtension(SaveFileName);
         string ext = Path.GetExtension(SaveFileName);
 
-        return Path.Combine(dir, $"{fileName}_error{i}{ext}");
+        return Path.Combine(dir, $"{fileNameWoExt}_error{i}{ext}");
     }
 
-    public static string SaveFileName { get; set; }
+    public string SaveFileName { get; set; } = fileName;
 }
