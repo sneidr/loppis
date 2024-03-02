@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Loppis\loppis.csproj" />
+	  <ProjectReference Include="..\Loppis\Loppis.csproj" />
 	</ItemGroup>
 
 </Project>
