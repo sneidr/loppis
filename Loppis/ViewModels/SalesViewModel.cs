@@ -120,6 +120,8 @@ public class SalesViewModel : BindableBase
     public ICommand EditPreviousSaleCommand { get; set; }
     public Dictionary<int, Seller> SellerList { get; set; }
 
+    private static readonly string[] NewLineSeparators = ["\n", "\r\n", "\r"];
+
     #region SaveToFile Command
 
     private bool CanExecuteSaveToFile()
@@ -317,7 +319,7 @@ public class SalesViewModel : BindableBase
             bool cardEntryInFile = false;
             SellerList.Clear();
 
-            foreach (string line in sellersContent.Split("\r\n"))
+            foreach (string line in sellersContent.Split(NewLineSeparators, System.StringSplitOptions.RemoveEmptyEntries))
             {
                 string[] a = line.Split(";");
                 Seller seller;

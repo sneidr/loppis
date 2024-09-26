@@ -52,6 +52,17 @@ public class LoadSellers
     }
 
     [TestMethod]
+    public void Sellers_Can_Be_Loaded_Into_SellerList_With_Unix_Style_Line_Endings()
+    {
+        var testFiles = new TestFiles();
+        SalesViewModel vm = new(testFiles.TransactionsFile);
+        vm.LoadSellerList("1;Firstname LastName\n2;John Doe\n7;Kasse;78\n8;Vykort;15");
+
+        Assert.AreEqual(4, vm.SellerList.Count);
+        Assert.AreEqual("John Doe", vm.SellerList[2].Name);
+    }
+
+    [TestMethod]
     public void Program_Is_Shut_Down_If_Seller_File_Is_Empty()
     {
         var testFiles = new TestFiles();
