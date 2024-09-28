@@ -9,6 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using loppis.Model;
 using loppis.DataAccess;
+using System;
+using Prism.Common;
+using Loppis.DataAccess;
 namespace loppis.ViewModels;
 
 public delegate void ShutDownDelegate();
@@ -85,7 +88,7 @@ public class SalesViewModel : BindableBase
         MoveFocusCommand = new DelegateCommand(ExecuteMove, CanExecuteMove);
         RoundUpCommand = new DelegateCommand(ExecuteRoundUp, CanExecuteRoundUp);
         BagCommand = new DelegateCommand(ExecuteBag, () => true);
-        CardCommand = new DelegateCommand(ExecuteCard, ()=>true);
+        CardCommand = new DelegateCommand(ExecuteCard, () => true);
         SaveToFileCommand = new DelegateCommand(ExecuteSaveToFile, CanExecuteSaveToFile);
         LoadCommand = new DelegateCommand(ExecuteLoad, () => true);
         UndoCommand = new DelegateCommand<object>(ExecuteUndo, CanExecuteUndo);
@@ -119,8 +122,6 @@ public class SalesViewModel : BindableBase
     public ICommand ClearCommand { get; set; }
     public ICommand EditPreviousSaleCommand { get; set; }
     public Dictionary<int, Seller> SellerList { get; set; }
-
-    private static readonly string[] NewLineSeparators = ["\n", "\r\n", "\r"];
 
     #region SaveToFile Command
 
@@ -301,8 +302,7 @@ public class SalesViewModel : BindableBase
     {
         try
         {
-            string sellersContent = File.ReadAllText(cSellerFileName);
-            LoadSellerList(sellersContent);
+            LoadSellerList(File.ReadAllText(cSellerFileName));
         }
         catch (FileNotFoundException ex)
         {
@@ -311,58 +311,12 @@ public class SalesViewModel : BindableBase
         }
     }
 
-    public void LoadSellerList(string sellersContent)
+    public void LoadSellerList(string fileContent)
     {
         try
         {
-            bool bagEntryInFile = false;
-            bool cardEntryInFile = false;
-            SellerList.Clear();
-
-            foreach (string line in sellersContent.Split(NewLineSeparators, System.StringSplitOptions.RemoveEmptyEntries))
-            {
-                string[] a = line.Split(";");
-                Seller seller;
-                int sellerId = int.Parse(a[0]);
-                if (sellerId == SaleEntry.RoundUpId)
-                {
-                    throw new System.FormatException($"Id 999 is reserved. Please choose another id for row: {line}");
-                }
-                if (a.Length > 2)
-                {
-                    seller = new Seller() { Name = a[1], DefaultPrice = int.Parse(a[2]) };
-                    SellerList.Add(sellerId, seller);
-                }
-                else if (a.Length > 1)
-                {
-                    seller = new Seller() { Name = a[1], DefaultPrice = null };
-                    SellerList.Add(sellerId, seller);
-                }
-                else
-                {
-                    throw new System.FormatException($"The line was incorrectly formatted: {line}");
-                }
-
-                if (seller.Name == "Kasse" && seller.DefaultPrice != null)
-                {
-                    bagEntryInFile = true;
-                    SaleEntry.BagId = sellerId;
-                }
-                if (seller.Name == "Vykort" && seller.DefaultPrice != null)
-                {
-                    cardEntryInFile = true;
-                    SaleEntry.CardId = sellerId;
-
-                }
-            }
-            if (!bagEntryInFile)
-            {
-                throw new System.FormatException("File must contain entry for \"Kasse\" with default price.");
-            }
-            if (!cardEntryInFile)
-            {
-                throw new System.FormatException("File must contain entry for \"Vykort\" with default price.");
-            }
+            CsvReader reader = new(fileContent);
+            SellerList = reader.Parse();
         }
         catch (System.FormatException ex)
         {
